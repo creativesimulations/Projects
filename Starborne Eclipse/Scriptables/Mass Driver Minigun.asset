@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c1031ddd23d4ad44b02f62b6c75f1ca, type: 3}
+  m_Name: Mass Driver Minigun
+  m_EditorClassIdentifier: 
+  projectile: {fileID: 3800904569520336750, guid: ea30e863e6822cf44977db00a7071842,
+    type: 3}
+  muzzleFlash: {fileID: 135356, guid: 3e5cf5a6342b9c14cb870e14339b87ae, type: 3}
+  explosion: {fileID: 122632, guid: 4de9806385b878449891fae5801394c4, type: 3}
+  fireRate: 0.25
+  coolDownRate: 2
+  damage: 2
+  damageRadius: 0.1

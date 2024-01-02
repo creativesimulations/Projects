@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c1031ddd23d4ad44b02f62b6c75f1ca, type: 3}
+  m_Name: WeaponScriptable
+  m_EditorClassIdentifier: 
+  projectile: {fileID: 0}
+  muzzleFlash: {fileID: 0}
+  explosion: {fileID: 0}
+  fireRate: 0
+  coolDownRate: 0
+  damage: 0
+  damageRadius: 0
