@@ -6,6 +6,7 @@ namespace Furry
     {
         void Use(string ability);
         string GetAbilityName();
+        void CheckImmunity(string ability);
     }
 
 }

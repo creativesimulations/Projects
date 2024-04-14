@@ -6,7 +6,7 @@ namespace Furry
 {
 public class PlayerDetector : MonoBehaviour
 {
-        [SerializeField] public Player PlayerDetected; // {  get; private set; }
+        public Player PlayerDetected { get; private set; }
         public bool PlayerInAttackRange;
 
         public void SetTriggerRaidus(float radius)
@@ -15,7 +15,6 @@ public class PlayerDetector : MonoBehaviour
         }
         private void OnTriggerEnter(Collider other)
         {
-            Debug.Log("other entered trigger");
             other.TryGetComponent<Player>(out Player player);
                 if (PlayerDetected == null)
             {
@@ -23,14 +22,12 @@ public class PlayerDetector : MonoBehaviour
             }
                 else if (player == PlayerDetected)
             {
-                Debug.Log("Stopping all coroutines");
                 StopAllCoroutines();
             }
         }
 
         private void OnTriggerExit(Collider other)
         {
-            Debug.Log("other left trigger");
             other.TryGetComponent<Player>(out Player player);
             if (PlayerDetected == player)
             {
@@ -38,11 +35,17 @@ public class PlayerDetector : MonoBehaviour
             }
         }
 
+        public void CheckAttackRadius(float attackRange)
+        {
+            if (attackRange >= Vector3.Distance(this.transform.position, PlayerDetected.transform.position))
+            {
+                PlayerInAttackRange = true;
+            }
+        }
+
         private IEnumerator ClearDetectedPlayerDelay()
         {
-            Debug.Log("ClearDetectedPlayerDelay");
             yield return new WaitForSeconds(3);
-            Debug.Log("Cleared");
             PlayerDetected = null;
         }
 

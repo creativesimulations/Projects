@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Furry
 {
 
-    [RequireComponent(typeof(AbilityContainer))]
+    [RequireComponent(typeof(AbilityController))]
     public class Character : MonoBehaviour, IHaveHealth, IHaveStats, IUseAbilities, ICanRegen
     {
         public int MaxHealth { get; set; }
@@ -20,11 +20,11 @@ namespace Furry
 
         [SerializeField] protected StatsScriptable _stats;
 
-        protected AbilityContainer _abilityContainer;
+        protected AbilityController _abilityController;
 
         protected virtual void Awake()
         {
-            _abilityContainer = GetComponent<AbilityContainer>();
+            _abilityController = GetComponent<AbilityController>();
             Init();
         }
 
@@ -63,10 +63,6 @@ namespace Furry
         {
 
         }
-        public virtual int DamageAmount(int strength)
-        {
-            throw new System.NotImplementedException();
-        }
         public virtual float ModifySpeed(float newSpeed)
         {
             return Speed = newSpeed;
@@ -87,10 +83,6 @@ namespace Furry
             throw new System.NotImplementedException();
         }
 
-        public bool CheckImmunity(string ability)
-        {
-            return _abilityContainer.GetImmuneEntry(ability);
-        }
 
         public void Use(string ability)
         {
@@ -100,6 +92,14 @@ namespace Furry
         public string GetAbilityName()
         {
             throw new System.NotImplementedException();
+        }
+
+        public void CheckImmunity(string ability)
+        {
+            if (_abilityController.ImmuneToAbilitiesDictionary.ContainsKey(ability))
+            {
+                // run another method to activate ability.
+            }
         }
     }
 }

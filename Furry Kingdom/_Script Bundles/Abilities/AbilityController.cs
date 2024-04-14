@@ -6,15 +6,21 @@ namespace Furry
 {
 
 
-    public class AbilityContainer : MonoBehaviour
+    public class AbilityController : MonoBehaviour
 {
         [SerializeField] private List<ScriptableObject> _optionalAbilities;
         [SerializeField] private List<ScriptableObject> _immuneToAbilities;
         [SerializeField] private ScriptableObject _startingAbility;
 
-        private Dictionary<string, ScriptableObject> _possibleAbilitiesDictionary = new Dictionary<string, ScriptableObject>();
-        private Dictionary<string, ScriptableObject> _immuneToAbilitiesDictionary = new Dictionary<string, ScriptableObject>();
+        public Dictionary<string, ScriptableObject> PossibleAbilitiesDictionary { get; private set; }
+        public Dictionary<string, ScriptableObject> ImmuneToAbilitiesDictionary {get; private set;}
         public ScriptableObject CurrentAbility { get; private set; }
+
+        private void Awake()
+        {
+            PossibleAbilitiesDictionary = new Dictionary<string, ScriptableObject>();
+            ImmuneToAbilitiesDictionary = new Dictionary<string, ScriptableObject>();
+        }
 
         private void Start()
         {
@@ -31,11 +37,11 @@ namespace Furry
         {
             foreach (ScriptableObject ability in _optionalAbilities)
             {
-                _possibleAbilitiesDictionary.Add(ability.name, ability);
+                PossibleAbilitiesDictionary.Add(ability.name, ability);
             }
             foreach (ScriptableObject ability in _immuneToAbilities)
             {
-                _immuneToAbilitiesDictionary.Add(ability.name, ability);
+                ImmuneToAbilitiesDictionary.Add(ability.name, ability);
             }
         }
 
@@ -43,17 +49,12 @@ namespace Furry
         {
             if (CurrentAbility == null || CurrentAbility.name != newAbility)
             {
-                CurrentAbility = _possibleAbilitiesDictionary[newAbility];
+                CurrentAbility = PossibleAbilitiesDictionary[newAbility];
             }
         }
 
-        public bool GetImmuneEntry(string abilityName)
+        public void CheckImmunity(string abilityName)
         {
-            if (_immuneToAbilitiesDictionary.ContainsKey(abilityName))
-            {
-                return true;
-            }
-            return false;
         }
 
     }

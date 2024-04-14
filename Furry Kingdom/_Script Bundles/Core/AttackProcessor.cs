@@ -19,10 +19,12 @@ public static class AttackProcessor
             target.ModifyCurrentHealth(amount);
         }
 
+        /*
         public static bool IsImmuneToAbility(IHaveAbilityImmunities target, string abilityName)
         {
             return target.CheckImmunity(abilityName);
         }
+        */
     }
 
 }

@@ -7,13 +7,16 @@ namespace Furry
 {
 
     [RequireComponent(typeof(NavMeshMovementNPC))]
-    public class Animals : Character
+    public class Animal : Character
     {
-        [SerializeField] protected float _idleTime;
-        [SerializeField] protected float _moseyRange;
+        [Tooltip("The maximum time the animal will idle in one location.")]
+        [SerializeField] protected float _maxIdleTime;
+        [Tooltip("The radius within which the animal will choose a new location to walk to.")]
+        [SerializeField] protected float _walkRadius;
+        [Tooltip("The radius at which the aminal will run from the player and also the distance it will run from the player.")]
         [SerializeField] protected float _runRange;
 
-        [SerializeField] protected ParticleSystem _runParticleSystem;
+        protected ParticleSystem _runParticleSystem;
         protected NavMeshMovementNPC _navMeshMovement;
 
         protected override void Awake()

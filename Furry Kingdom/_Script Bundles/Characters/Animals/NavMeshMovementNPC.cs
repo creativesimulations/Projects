@@ -14,29 +14,22 @@ public class NavMeshMovementNPC : MonoBehaviour
 
     private CancellationTokenSource _searchCTS;
     private CancellationTokenSource _moveCTS;
+    private Vector3 _tryLocation;
+    private Vector3 _newLocation;
+    private Vector3 _directionToPlayer;
 
-    private void Awake()
+    private void Awake() { Agent = GetComponent<NavMeshAgent>(); _path = new NavMeshPath(); }
+    private void Start() { ReachedDestination(); }
+    public void SetMovementSpeed(float newSpeed) { Agent.speed = newSpeed; }
+    public void PendingArrival() { Arrived = false; }
+    public void ReachedDestination() { Arrived = true; }
+
+    public void Walk(float range)
     {
-        Agent = GetComponent<NavMeshAgent>();
-        _path = new NavMeshPath();
+        Debug.Log("Walk");
+        PendingArrival();
+        SearchForLocation(range);
     }
-
-    private void Start()
-    {
-        _searchCTS = new CancellationTokenSource();
-        ReachedDestination();
-    }
-
-    public void EnableAgent(bool value)
-    {
-        Agent.enabled = value;
-    }
-
-    public void SetMovementSpeed(float newSpeed)
-    {
-        Agent.speed = newSpeed;
-    }
-
     public void Chase(Vector3 destination)
     {
         if (Arrived)
@@ -49,43 +42,73 @@ public class NavMeshMovementNPC : MonoBehaviour
             Agent.SetDestination(destination);
         }
     }
-    public void SearchForLocation(float range)
+    public void Flee(Vector3 playerPosition, float walkRange)
     {
         PendingArrival();
+        _directionToPlayer = playerPosition - transform.position;
+        _tryLocation = transform.position + _directionToPlayer;
+        _newLocation = TestNewLocation(_tryLocation, walkRange);
+
+        if (_newLocation != Vector3.zero)
+        {
+            Move(_newLocation);
+        }
+        else
+        {
+            SearchForLocation(walkRange);
+        }
+    }
+    public void SearchForLocation(float range)
+    {
+        Debug.Log("search");
         _searchCTS = new CancellationTokenSource();
         GetNewLocation(_searchCTS.Token, range);
     }
 
-    public async void GetNewLocation(CancellationToken ct, float moseyRange)
+    public async void GetNewLocation(CancellationToken ct, float walkRadius)
     {
         while (!ct.IsCancellationRequested)
         {
-            Vector3 randomPoint = transform.position + Random.insideUnitSphere * moseyRange;
-            NavMeshHit hit;
+            _newLocation = transform.position + Random.insideUnitSphere * walkRadius;
 
-            if (NavMesh.SamplePosition(randomPoint, out hit, moseyRange, NavMesh.AllAreas))
+            if (TestNewLocation(_newLocation, walkRadius) != Vector3.zero)
             {
-                Debug.DrawRay(hit.position, Vector3.up, Color.blue, 2);
-
-                if (CheckPathReachable(hit.position))
-                {
-                    Move(hit.position);
-                    CancelSearchForLocation();
-                }
+                Move(_newLocation);
+                CancelSearchForLocation();
             }
             await Task.Yield();
         }
     }
+    private Vector3 TestNewLocation(Vector3 location, float walkRadius)
+    {
+        NavMeshHit hit;
+
+        if (NavMesh.SamplePosition(location, out hit, walkRadius, NavMesh.AllAreas))
+        {
+            Debug.DrawRay(hit.position, Vector3.up, Color.blue, 2);
+
+            Debug.Log("TestNewLocation = " + hit.position);
+            if (CheckPathReachable(hit.position))
+            {
+                Debug.Log("REACHABLE");
+                return hit.position;
+            }
+        }
+        return Vector3.zero;
+    }
     private bool CheckPathReachable(Vector3 position)
     {
+        Debug.Log("Checking if path is reachable");
         Agent.CalculatePath(position, _path);
 
         if (_path.status == NavMeshPathStatus.PathComplete)
         {
+            Debug.Log("Path Complete");
             _reachablePath = true;
         }
         else
         {
+            Debug.Log("Path NOT Complete");
             _reachablePath = false;
         }
 
@@ -93,6 +116,7 @@ public class NavMeshMovementNPC : MonoBehaviour
     }
     private async void Move(Vector3 destination)
     {
+        Debug.Log("Moving");
         _moveCTS = new CancellationTokenSource();
         Agent.SetDestination(destination);
 
@@ -102,42 +126,28 @@ public class NavMeshMovementNPC : MonoBehaviour
         {
             if (!Agent.hasPath)
             {
+                Debug.Log("NO PATH!!!!");
                 await Task.Yield();
             }
             if (Agent.remainingDistance <= Agent.stoppingDistance)
             {
+                Debug.Log("reached destination");
                 ReachedDestination();
             }
                 await Task.Yield();
         }
     }
 
-    public void PendingArrival()
-    {
-        Debug.Log("NOT Arrived");
-        Arrived = false;
-    }
 
+    public void CancelSearchForLocation() { _searchCTS?.Cancel(); }
     public void CancelMovingToDestination()
     {
-        Debug.Log("CancelMovingToDestination");
         if (Agent.hasPath)
         {
             Agent.SetDestination(transform.position);
         }
         ReachedDestination();
     }
-    public void CancelSearchForLocation()
-    {
-        _searchCTS?.Cancel();
-    }
-
-    public void ReachedDestination()
-    {
-        Debug.Log("Arrived");
-        Arrived = true;
-    }
-
     private void OnDisable()
     {
         CancelSearchForLocation();

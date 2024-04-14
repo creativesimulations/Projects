@@ -8,7 +8,6 @@ namespace Furry
     public abstract class Ability : ScriptableObject
     {
         [SerializeField] public string _name = "Default Name";
-        [SerializeField] public bool _isAttackAbility = true;
         [SerializeField] public int _reuseDelay = 3;
         public bool _coolingDown;
 

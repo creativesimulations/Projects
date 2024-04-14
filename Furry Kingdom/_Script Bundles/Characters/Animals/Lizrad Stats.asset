@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5b8dcf133a2d1db4aa5804457a5baabc, type: 3}
-  m_Name: Spider Stats
+  m_Name: Lizrad Stats
   m_EditorClassIdentifier: 
   MaxHealth: 100
-  Strength: 5
-  Constitution: 3
-  Stamina: 5
-  Agility: 2
-  Speed: 1
-  RegenAmount: 1
-  RegenSpeed: 2.5
+  Strength: 1
+  Constitution: 2
+  Stamina: 4
+  Agility: 6
+  Speed: 6
+  RegenAmount: 4
+  RegenSpeed: 6

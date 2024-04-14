@@ -13,7 +13,7 @@ public class Idle : IState
         private float _moveAgainTime;
 
         private float _idleTime;
-        public bool Ancy => _moveAgainTime < 0;
+        public bool Restless => _moveAgainTime < 0;
 
         public Idle(Animator animator, float idleTime)
         {

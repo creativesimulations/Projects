@@ -7,13 +7,25 @@ using UnityEngine.AI;
 namespace Furry
 {
 
-    public class Predator : Animals
+    public class Predator : Animal, ICanAttack
     {
 
-        [SerializeField] public float AttackRange;
+        [SerializeField] private float _attackRange;
+        [SerializeField] private int _percentCritChance;
         private StateMachine _stateMachine;
         private PlayerDetector _playerDetector;
         private Animator _animator;
+
+        public float AttackRange
+        {
+            get { return _attackRange; }
+            set { _attackRange = value; }
+        }
+        public int PercentCritChance
+        {
+            get { return _percentCritChance; }
+            set { _percentCritChance = value; }
+        }
 
         protected override void Awake()
         {
@@ -25,16 +37,15 @@ namespace Furry
 
             _stateMachine = new StateMachine();
 
-            var idle = new Idle(_animator, _idleTime);
-            var mosey = new Mosey(_navMeshMovement, _animator, _moseyRange);
+            var idle = new Idle(_animator, _maxIdleTime);
+            var walk = new Walk(_navMeshMovement, _animator, _walkRadius);
             var chase = new Chase(_navMeshMovement, _animator, _runParticleSystem, _playerDetector, this);
             var attack = new Attack(_animator, Agility, _playerDetector, this);
             var die = new Die(_animator);
 
-              At(idle, mosey, Bored());
-            At(mosey, idle, Tired());
+            At(idle, walk, Bored());
+            At(walk, idle, Tired());
             At(chase, idle, Calm());
-            At(attack, idle, Calm());
             At(chase, attack, Attacking());
 
             _stateMachine.AddAnyTransition(chase, Angry());
@@ -48,22 +59,21 @@ namespace Furry
             Func<bool> Calm() => () => _playerDetector.PlayerDetected == false;
             Func<bool> Angry() => () => _playerDetector.PlayerDetected == true && _playerDetector.PlayerInAttackRange == false;
             Func<bool> Attacking() => () => _playerDetector.PlayerInAttackRange == true;
-            Func<bool> Bored() => () => idle.Ancy == true && _playerDetector.PlayerDetected == false;
+            Func<bool> Bored() => () => idle.Restless == true && _playerDetector.PlayerDetected == false;
             Func<bool> Killed() => () => CurrentHealth <= 0;
 
         }
 
-
-
         private void Update() => _stateMachine.Tick();
 
-        private void OnTriggerEnter(Collider other)
+        public void Attack(Player player, Animal animal)
         {
+            Debug.Log("Attacking a " + animal.gameObject.name);
         }
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.blue;
-            Gizmos.DrawWireSphere(transform.position, _moseyRange);
+            Gizmos.DrawWireSphere(transform.position, _walkRadius);
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, _runRange);
         }

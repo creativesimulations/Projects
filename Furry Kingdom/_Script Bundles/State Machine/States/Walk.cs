@@ -1,24 +1,19 @@
-using System;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.UIElements;
 
 namespace Furry
 {
 
-public class Mosey : IState
+public class Walk : IState
 {
         private NavMeshMovementNPC _navMovement;
         private Animator _animator;
-        private float _moseyRange;
+        private float _walkRange;
 
-        public Mosey(NavMeshMovementNPC npcNavMovement, Animator animator, float moseyRange)
+        public Walk(NavMeshMovementNPC npcNavMovement, Animator animator, float walkRange)
         {
             _navMovement = npcNavMovement;
             _animator = animator;
-            _moseyRange = moseyRange;
+            _walkRange = walkRange;
         }
 
         public void Tick()
@@ -27,14 +22,14 @@ public class Mosey : IState
 
         public void OnEnter()
         {
-            Debug.Log("Mosing");
+            Debug.Log("Walking");
             _animator.SetBool("isWalking", true);
-            _navMovement.SearchForLocation(_moseyRange);
+            _navMovement.Walk(_walkRange);
         }
 
         public void OnExit()
         {
-            Debug.Log("Exit Mosying");
+            Debug.Log("Exit Walking");
             _navMovement.CancelSearchForLocation();
             _navMovement.CancelMovingToDestination();
             _animator.SetBool("isWalking", false);
