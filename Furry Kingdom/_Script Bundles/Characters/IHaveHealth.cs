@@ -8,8 +8,8 @@ namespace Furry
         int MaxHealth { get; set; }
         int CurrentHealth { get; set; }
 
-        int ModifyMaxHealth(int amount);
-        int ModifyCurrentHealth(int amount);
+        void ModifyMaxHealth(int amount);
+        void ModifyCurrentHealth(int amount);
     }
 
 }

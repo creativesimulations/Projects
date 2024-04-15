@@ -24,11 +24,14 @@ namespace Furry
             var idle = new Idle(_animator, _maxIdleTime);
             var walk = new Walk(_navMeshMovement, _animator, _walkRadius);
             var flee = new Flee(_navMeshMovement, _animator, _runParticleSystem, _playerDetector, this, _runRange);
+            var coolDown = new CoolDown(_animator, _playerDetector, _coolDownTime);
             var die = new Die( _animator);
 
             At(idle, walk, Bored());
             At(walk, idle, Tired());
             At(flee, idle, Calm());
+            At(coolDown, idle, Calm());
+            At(flee, coolDown, Resting());
 
             _stateMachine.AddAnyTransition(flee, Scared());
             _stateMachine.AddAnyTransition(die, Killed());
@@ -38,12 +41,12 @@ namespace Furry
             void At(IState to, IState from, Func<bool> condition) => _stateMachine.AddTransition(to, from, condition);
 
             Func<bool> Tired() => () => _navMeshMovement.Arrived == true && _playerDetector.PlayerDetected == false;
-            Func<bool> Calm() => () => _playerDetector.PlayerDetected == false;
-            Func<bool> Scared() => () => _playerDetector.PlayerDetected == true;
+            Func<bool> Calm() => () => _playerDetector.PlayerDetected == null;
+            Func<bool> Scared() => () => _playerDetector.PlayerDetected == true && _playerDetector.PlayerLeaving == false;
+            Func<bool> Resting() => () => _playerDetector.PlayerDetected == true && _playerDetector.PlayerLeaving == true;
             Func<bool> Bored() => () => idle.Restless == true && _playerDetector.PlayerDetected == false;
             Func<bool> Killed() => () => CurrentHealth <= 0;
         }
-
 
         private void Update() => _stateMachine.Tick();
 

@@ -27,14 +27,12 @@ public class Idle : IState
         }
         public void OnEnter()
         {
-            Debug.Log("Idling");
+            _moveAgainTime = UnityEngine.Random.Range(_idleTime, (_idleTime * 1.5f));
             _animator.SetBool("isIdle", true);
         }
 
         public void OnExit()
         {
-            Debug.Log("Exit Idling");
-            _moveAgainTime = UnityEngine.Random.Range(_idleTime, (_idleTime * 1.5f));
             _animator.SetBool("isIdle", false);
         }
 

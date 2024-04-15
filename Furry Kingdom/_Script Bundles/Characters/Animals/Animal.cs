@@ -15,6 +15,8 @@ namespace Furry
         [SerializeField] protected float _walkRadius;
         [Tooltip("The radius at which the aminal will run from the player and also the distance it will run from the player.")]
         [SerializeField] protected float _runRange;
+        [Tooltip("The inactive time after an animal chases or runs from a player.")]
+        [SerializeField] protected float _coolDownTime;
 
         protected ParticleSystem _runParticleSystem;
         protected NavMeshMovementNPC _navMeshMovement;

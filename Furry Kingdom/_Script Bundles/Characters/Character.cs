@@ -18,12 +18,15 @@ namespace Furry
         public int RegenAmount { get; set; }
         public float RegenSpeed { get; set; }
 
+        [SerializeField] protected HealthBar HealthBar;
+
         [SerializeField] protected StatsScriptable _stats;
 
         protected AbilityController _abilityController;
 
         protected virtual void Awake()
         {
+            HealthBar = GetComponent<HealthBar>();
             _abilityController = GetComponent<AbilityController>();
             Init();
         }
@@ -73,9 +76,10 @@ namespace Furry
             return MaxHealth += amount;
         }
 
-        public virtual int ModifyCurrentHealth(int amount)
+        public virtual void ModifyCurrentHealth(int amount)
         {
-            return CurrentHealth += amount;
+            CurrentHealth += amount;
+            HealthBar.UpdateHealthBar(CurrentHealth, MaxHealth);
         }
 
         public virtual float ModifyRegenAmount(float amount)

@@ -33,7 +33,6 @@ public class Chase : IState
         }
         public void OnEnter()
         {
-            Debug.Log("Chasing");
             _target = _playerDetector.PlayerDetected;
             _navMovement.SetMovementSpeed(_predator.Speed * _speedModifier);
             _runParticle.Play();
@@ -42,7 +41,6 @@ public class Chase : IState
 
         public void OnExit()
         {
-            Debug.Log("Exit Chasing");
             _navMovement.SetMovementSpeed(_predator.Speed);
             _navMovement.CancelMovingToDestination();
             _runParticle.Stop();

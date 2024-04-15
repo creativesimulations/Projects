@@ -7,6 +7,7 @@ namespace Furry
 public class PlayerDetector : MonoBehaviour
 {
         public Player PlayerDetected { get; private set; }
+        public bool PlayerLeaving;
         public bool PlayerInAttackRange;
 
         public void SetTriggerRaidus(float radius)
@@ -15,7 +16,9 @@ public class PlayerDetector : MonoBehaviour
         }
         private void OnTriggerEnter(Collider other)
         {
-            other.TryGetComponent<Player>(out Player player);
+        PlayerLeaving = false;
+        // add to stack? if another player comes into range
+        other.TryGetComponent<Player>(out Player player);
                 if (PlayerDetected == null)
             {
                 PlayerDetected = player;
@@ -31,7 +34,9 @@ public class PlayerDetector : MonoBehaviour
             other.TryGetComponent<Player>(out Player player);
             if (PlayerDetected == player)
             {
-                StartCoroutine(ClearDetectedPlayerDelay());
+                // check that no other players are in the area first.
+                PlayerLeaving = true;
+             //   StartCoroutine(ClearDetectedPlayerDelay());
             }
         }
 
@@ -43,11 +48,16 @@ public class PlayerDetector : MonoBehaviour
             }
         }
 
-        private IEnumerator ClearDetectedPlayerDelay()
+        private void ChangeTargets()
         {
-            yield return new WaitForSeconds(3);
-            PlayerDetected = null;
+            // Use a stack? To check if another player is in the area after the first one left. If so, change to that target before trying to clear
         }
 
+        public void PlayerLeft()
+        {
+            Debug.Log("Player Left");
+            PlayerDetected = null;
+            PlayerLeaving = false;
+        }
     }
 }
