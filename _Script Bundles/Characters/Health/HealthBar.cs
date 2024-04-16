@@ -5,10 +5,11 @@ using UnityEngine.UI;
 
 public class HealthBar : MonoBehaviour
 {
-    private Image _healthBar;
-    private void Awake()
+    [SerializeField] private Image _healthBar;
+    [SerializeField] private Camera _carmeraToLookAt;
+    private void Update()
     {
-        _healthBar = GetComponent<Image>();
+        transform.LookAt(_carmeraToLookAt.transform.position);
     }
     public void UpdateHealthBar(int currentHealth, int maxHealth)
     {

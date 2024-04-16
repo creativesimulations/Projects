@@ -12,6 +12,8 @@ namespace Furry
         public event Action OnJumpHeld;
         public event Action OnJumpRelease;
         public event Action OnRightClick;
+        public event Action OnMove;
+        public event Action OnRBJump;
 
         [Header("Input Action References")]
         [Tooltip("Input Action Asset")]
@@ -24,14 +26,17 @@ namespace Furry
         [SerializeField] private string _jump = "Jump";
         [SerializeField] private string _movement = "Movement";
         [SerializeField] private string _rightMouse = "MouseMovement";
+        [SerializeField] private string _rbJump = "RigidBodyJump";
 
         private InputAction _abilityAction;
         private InputAction _jumpAction;
         private InputAction _moveAction;
         private InputAction _rightMouseAction;
+        private InputAction _rbJumpAction;
 
         public bool AbilityTriggered { get; private set; }
         public bool JumpTriggered { get; private set; }
+        public bool MoveTriggered { get; private set; }
         public Vector2 MoveInput { get; private set; }
         public bool RightMouseClick { get; private set; }
 
@@ -48,7 +53,7 @@ namespace Furry
             _jumpAction = _playerControls.FindActionMap(ActionMapName).FindAction(_jump);
             _moveAction = _playerControls.FindActionMap(ActionMapName).FindAction(_movement);
             _rightMouseAction = _playerControls.FindActionMap(ActionMapName).FindAction(_rightMouse);
-
+            _rbJumpAction = _playerControls.FindActionMap(ActionMapName).FindAction(_rbJump);
             RegisterInputActions();
         }
 
@@ -60,11 +65,17 @@ namespace Furry
             _jumpAction.started += JumpHeld;
             _jumpAction.canceled += JumpRelease;
 
-            _moveAction.performed += context => MoveInput = context.ReadValue<Vector2>();
-            _moveAction.canceled += context => MoveInput = Vector2.zero;
+            _rbJumpAction.started += context => OnRBJump?.Invoke();
+
+            _moveAction.performed += Move;
+            _moveAction.started += Moving;
+            _moveAction.canceled += CancelMoving;
 
             _rightMouseAction.performed += RightClick;
+        }
 
+        public void RbJump(InputAction.CallbackContext context)
+        {
         }
         public void RightClick(InputAction.CallbackContext context)
         {
@@ -72,6 +83,7 @@ namespace Furry
         }
         public void JumpHeld(InputAction.CallbackContext context)
         {
+            Debug.Log("On Jump held??");
             JumpTriggered = true;
             OnJumpHeld?.Invoke();
         }
@@ -80,6 +92,20 @@ namespace Furry
             JumpTriggered = false;
             OnJumpRelease?.Invoke();
         }
+        public void Moving(InputAction.CallbackContext context)
+        {
+            MoveTriggered = true;
+        }
+        public void CancelMoving(InputAction.CallbackContext context)
+        {
+            MoveInput = Vector2.zero;
+            MoveTriggered = false;
+        }
+        public void Move(InputAction.CallbackContext context)
+        {
+            MoveInput = context.ReadValue<Vector2>();
+            OnMove?.Invoke();
+        }
 
         private void OnEnable()
         {
@@ -87,6 +113,7 @@ namespace Furry
             _jumpAction.Enable();
             _moveAction.Enable();
             _rightMouseAction.Enable();
+            _rbJumpAction.Enable();
         }
         private void OnDisable()
         {
@@ -94,6 +121,7 @@ namespace Furry
             _jumpAction.Disable();
             _moveAction.Disable();
             _rightMouseAction.Disable();
+            _rbJumpAction.Disable();
         }
     }
 

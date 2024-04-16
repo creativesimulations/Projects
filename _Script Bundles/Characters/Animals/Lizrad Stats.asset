@@ -17,6 +17,6 @@ MonoBehaviour:
   Constitution: 2
   Stamina: 4
   Agility: 6
-  Speed: 6
+  Speed: 4
   RegenAmount: 4
   RegenSpeed: 6

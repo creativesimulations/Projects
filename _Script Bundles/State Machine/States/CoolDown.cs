@@ -24,7 +24,6 @@ public class CoolDown : IState
             if (Time.time >= _endCoolDownTime)
             {
                 Debug.Log("Calling Player Left");
-                _playerDetector.PlayerLeft();
             }
         }
 

@@ -42,8 +42,8 @@ namespace Furry
 
             Func<bool> Tired() => () => _navMeshMovement.Arrived == true && _playerDetector.PlayerDetected == false;
             Func<bool> Calm() => () => _playerDetector.PlayerDetected == null;
-            Func<bool> Scared() => () => _playerDetector.PlayerDetected == true && _playerDetector.PlayerLeaving == false;
-            Func<bool> Resting() => () => _playerDetector.PlayerDetected == true && _playerDetector.PlayerLeaving == true;
+            Func<bool> Scared() => () => _playerDetector.PlayerDetected == true && _playerDetector.IsPlayerLeaving == false;
+            Func<bool> Resting() => () => _playerDetector.PlayerDetected == true && _playerDetector.IsPlayerLeaving == true;
             Func<bool> Bored() => () => idle.Restless == true && _playerDetector.PlayerDetected == false;
             Func<bool> Killed() => () => CurrentHealth <= 0;
         }

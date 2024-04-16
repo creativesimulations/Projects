@@ -2,7 +2,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.UIElements;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class NavMeshMovementNPC : MonoBehaviour
@@ -17,8 +16,6 @@ public class NavMeshMovementNPC : MonoBehaviour
     private Vector3 _tryLocation;
     private Vector3 _newLocation;
     private Vector3 _directionToPlayer;
-
-    private int called = 0;
 
     private void Awake() { Agent = GetComponent<NavMeshAgent>(); _path = new NavMeshPath(); }
     private void Start() { ReachedDestination(); }
@@ -42,12 +39,12 @@ public class NavMeshMovementNPC : MonoBehaviour
             Agent.SetDestination(destination);
         }
     }
-    public void Flee(Vector3 playerPosition, float walkRange)
+    public void Flee(Vector3 playerPosition, float runRange)
     {
         PendingArrival();
         _directionToPlayer = playerPosition - transform.position;
         _tryLocation = transform.position - _directionToPlayer;
-        _newLocation = TestNewLocation(_tryLocation, walkRange);
+        _newLocation = TestNewLocation(_tryLocation, runRange);
 
         if (_newLocation != Vector3.zero)
         {
@@ -55,7 +52,7 @@ public class NavMeshMovementNPC : MonoBehaviour
         }
         else
         {
-            SearchForLocation(walkRange);
+            SearchForLocation(runRange);
         }
     }
     public void SearchForLocation(float range)
@@ -64,13 +61,13 @@ public class NavMeshMovementNPC : MonoBehaviour
         GetNewLocation(_getNewLocationCTS.Token, range);
     }
 
-    public async void GetNewLocation(CancellationToken ct, float walkRadius)
+    public async void GetNewLocation(CancellationToken ct, float range)
     {
-        while (!ct.IsCancellationRequested)
+        while (!ct.IsCancellationRequested && !Agent.hasPath)
         {
-            _newLocation = transform.position + Random.insideUnitSphere * walkRadius;
+            _newLocation = transform.position + Random.insideUnitSphere * range;
 
-            if (TestNewLocation(_newLocation, walkRadius) != Vector3.zero)
+            if (TestNewLocation(_newLocation, range) != Vector3.zero)
             {
                 Move(_newLocation);
                 CancelGetNewLocation();
@@ -78,11 +75,11 @@ public class NavMeshMovementNPC : MonoBehaviour
             await Task.Yield();
         }
     }
-    private Vector3 TestNewLocation(Vector3 location, float walkRadius)
+    private Vector3 TestNewLocation(Vector3 location, float range)
     {
         NavMeshHit hit;
 
-        if (NavMesh.SamplePosition(location, out hit, walkRadius, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(location, out hit, range, NavMesh.AllAreas))
         {
             Debug.DrawRay(hit.position, Vector3.up, Color.blue, 2);
 
@@ -110,11 +107,10 @@ public class NavMeshMovementNPC : MonoBehaviour
     }
     private async void Move(Vector3 destination)
     {
-        called++;
         _moveCTS = new CancellationTokenSource();
         Agent.SetDestination(destination);
 
-        Debug.DrawRay(destination, Vector3.up, Color.red, 2);
+      //  Debug.DrawRay(destination, Vector3.up, Color.red, 2);
 
         while (!Arrived && !_moveCTS.IsCancellationRequested)
         {

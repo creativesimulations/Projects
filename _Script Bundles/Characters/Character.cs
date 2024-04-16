@@ -26,7 +26,7 @@ namespace Furry
 
         protected virtual void Awake()
         {
-            HealthBar = GetComponent<HealthBar>();
+            HealthBar = GetComponentInChildren<HealthBar>();
             _abilityController = GetComponent<AbilityController>();
             Init();
         }
@@ -104,6 +104,11 @@ namespace Furry
             {
                 // run another method to activate ability.
             }
+        }
+
+        void IHaveHealth.ModifyMaxHealth(int amount)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

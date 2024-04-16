@@ -29,7 +29,7 @@ public class Flee : IState
 
         public void Tick()
         {
-            if (_navMovement.Arrived && _playerDetector.PlayerDetected)
+            if (_navMovement.Arrived && !_playerDetector.IsPlayerLeaving)
             {
                 _navMovement.Flee(_target.transform.position, _runRange);
             }
@@ -50,7 +50,6 @@ public class Flee : IState
             Debug.Log("Exit Fleeing");
             _navMovement.SetMovementSpeed(_prey.Speed);
             _navMovement.CancelGetNewLocation();
-            _navMovement.CancelMovingToDestination();
             _runParticle.Stop();
             _animator.SetBool("isFleeing", false);
         }
