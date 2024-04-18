@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UIElements;
 using static UnityEditor.FilePathAttribute;
+using static UnityEditor.PlayerSettings;
 
 namespace Furry
 {
@@ -20,7 +21,8 @@ namespace Furry
         [SerializeField] private Vector3 _seedPosition;
         Vector3 currentPos;
 
-        private HashSet<Vector2> _landPosList = new HashSet<Vector2>();
+        private List<Vector2> _landPosList2 = new List<Vector2>();
+        private List<Vector3> _landPosList3 = new List<Vector3>();
         private List<GameObject> _landObjectsList = new List<GameObject>();
         private Vector3 _playerSpawnOffset = new Vector3(0, 1, 0);
         private CancellationTokenSource _nextPosCTS = new CancellationTokenSource();
@@ -38,17 +40,138 @@ namespace Furry
             CreateTerrain();
         }
 
-        private void CreateTerrain()
+        private async void CreateTerrain()
         {
             SpawnLand(currentPos);
-            Vector2 XYPosition = new Vector2(currentPos.x, currentPos.z);
-            _landPosList.Add(XYPosition);
             for (int i = 1; i < _levelSize; i++)
             {
-                NextPosition(_nextPosCTS.Token, currentPos);
+                await NextPosition(_nextPosCTS.Token);
             }
         }
 
+        private void AddVectorsToLists(Vector3 pos)
+        {
+            _landPosList3.Add(pos);
+            Vector2 XYPosition = new Vector2(pos.x, pos.z);
+            _landPosList2.Add(XYPosition);
+        }
+
+        private Vector3 GetLocationSwitch(Vector3 origin)
+        {
+            int direction = Random.Range(0, 16);
+            Vector3 nextPos;
+            switch (direction)
+            {
+                case 0:
+                    nextPos = new Vector3(origin.x + _terrainOffsets.x, origin.y, origin.z);
+                    return nextPos;
+                case 1:
+                    nextPos = new Vector3(origin.x + _terrainOffsets.x, origin.y + _terrainOffsets.y, origin.z);
+                    return WithinHeightBounds(origin, nextPos);
+                case 12:
+                    nextPos = new Vector3(origin.x + _terrainOffsets.x, origin.y + _terrainOffsets.y, origin.z);
+                    return WithinHeightBounds(origin, nextPos);
+                case 2:
+                    nextPos = new Vector3(origin.x + _terrainOffsets.x, origin.y - _terrainOffsets.y, origin.z);
+                    return WithinHeightBounds(origin, nextPos);
+                case 3:
+                    nextPos = new Vector3(origin.x - _terrainOffsets.x, origin.y, origin.z);
+                    return nextPos;
+                case 4:
+                    nextPos = new Vector3(origin.x - _terrainOffsets.x, origin.y + _terrainOffsets.y, origin.z);
+                        return WithinHeightBounds(origin, nextPos);
+                case 13:
+                    nextPos = new Vector3(origin.x - _terrainOffsets.x, origin.y + _terrainOffsets.y, origin.z);
+                    return WithinHeightBounds(origin, nextPos);
+                case 5:
+                    nextPos = new Vector3(origin.x - _terrainOffsets.x, origin.y - _terrainOffsets.y, origin.z);
+                    return WithinHeightBounds(origin, nextPos);
+                case 6:
+                    nextPos = new Vector3(origin.x, origin.y, origin.z + _terrainOffsets.x);
+                    return nextPos;
+                case 7:
+                    nextPos = new Vector3(origin.x, origin.y + _terrainOffsets.y, origin.z + _terrainOffsets.x);
+                    return WithinHeightBounds(origin, nextPos);
+                case 14:
+                    nextPos = new Vector3(origin.x, origin.y + _terrainOffsets.y, origin.z + _terrainOffsets.x);
+                    return WithinHeightBounds(origin, nextPos);
+                case 8:
+                    nextPos = new Vector3(origin.x, origin.y - _terrainOffsets.y, origin.z + _terrainOffsets.x);
+                    return WithinHeightBounds(origin, nextPos);
+                case 9:
+                    nextPos = new Vector3(origin.x, origin.y, origin.z - _terrainOffsets.x);
+                    return nextPos;
+                case 10:
+                    nextPos = new Vector3(origin.x, origin.y + _terrainOffsets.y, origin.z - _terrainOffsets.x);
+                    return WithinHeightBounds(origin, nextPos);
+                case 15:
+                    nextPos = new Vector3(origin.x, origin.y + _terrainOffsets.y, origin.z - _terrainOffsets.x);
+                    return WithinHeightBounds(origin, nextPos);
+                case 11:
+                    nextPos = new Vector3(origin.x, origin.y - _terrainOffsets.y, origin.z - _terrainOffsets.x);
+                    return WithinHeightBounds(origin, nextPos);
+                default:
+                    return origin;
+            }
+
+        }
+
+        private bool CheckPos(Vector3 posToCheck)
+        {
+            Vector2 checkPos = new Vector2(posToCheck.x, posToCheck.z);
+            return _landPosList2.Contains(checkPos);
+        }
+        private Vector3 WithinHeightBounds(Vector3 origin, Vector3 potentialPos)
+        {
+            if (potentialPos.y <= _maxLevelHeight && potentialPos.y >= 0)
+            {
+                return potentialPos;
+            }
+            return origin;
+        }
+        
+        private async Task NextPosition(CancellationToken ct)
+        {
+            bool foundAvailableArea = false;
+            int iterations = 0;
+            Vector3 potentialPos;
+            while (!foundAvailableArea && !ct.IsCancellationRequested)
+            {
+                if (iterations > 6)
+                {
+                    int i = Random.Range(0, _landPosList3.Count);
+                    iterations = 0;
+                    potentialPos = GetLocationSwitch(_landPosList3[i]);
+                }
+                else
+                {
+                    potentialPos = GetLocationSwitch(currentPos);
+                }
+
+                if (!CheckPos(potentialPos))
+                {
+                    SpawnLand(potentialPos);
+                    foundAvailableArea = true;
+                }
+                iterations++;
+                await Task.Yield();
+            }
+        }
+        
+
+        private void SpawnLand(Vector3 pos)
+        {
+            GameObject land = Instantiate(_terrains[Random.Range(0, _terrains.Count)], pos, Quaternion.identity);
+            _landObjectsList.Add(land);
+            land.transform.SetParent(transform);
+            currentPos = pos;
+            AddVectorsToLists(pos);
+        }
+
+        private void OnDisable()
+        {
+            _nextPosCTS.Cancel();
+        }
         private async void NextPosition(CancellationToken ct, Vector3 currentPos)
         {
             bool foundAvailableArea = false;
@@ -69,10 +192,10 @@ namespace Furry
                     {
                         Vector2 XYPosition = new Vector2(nextPos.x, nextPos.z);
                         Debug.Log("x positive");
-                        if (_landPosList.Contains(XYPosition) == false)
+                        if (_landPosList2.Contains(XYPosition) == false)
                         {
                             Debug.Log("not found");
-                            _landPosList.Add(XYPosition);
+                            _landPosList2.Add(XYPosition);
                             // The new position will be even on the Y axis;
                             if (even)
                             {
@@ -100,10 +223,10 @@ namespace Furry
                     {
                         Vector2 XYPosition = new Vector2(nextPos.x, nextPos.z);
                         Debug.Log("x negative");
-                        if (_landPosList.Contains(XYPosition) == false)
+                        if (_landPosList2.Contains(XYPosition) == false)
                         {
                             Debug.Log("not found");
-                            _landPosList.Add(XYPosition);
+                            _landPosList2.Add(XYPosition);
                             // The new position will be even on the Y axis;
                             if (even)
                             {
@@ -135,10 +258,10 @@ namespace Furry
                     {
                         Vector2 XYPosition = new Vector2(nextPos.x, nextPos.z);
                         Debug.Log("z positive");
-                        if (_landPosList.Contains(XYPosition) == false)
+                        if (_landPosList2.Contains(XYPosition) == false)
                         {
                             Debug.Log("not found");
-                            _landPosList.Add(XYPosition);
+                            _landPosList2.Add(XYPosition);
                             // The new position will be even on the Y axis;
                             if (even)
                             {
@@ -165,10 +288,10 @@ namespace Furry
                     {
                         Vector2 XYPosition = new Vector2(nextPos.x, nextPos.z);
                         Debug.Log("z negative");
-                        if (_landPosList.Contains(XYPosition) == false)
+                        if (_landPosList2.Contains(XYPosition) == false)
                         {
                             Debug.Log("not found");
-                            _landPosList.Add(XYPosition);
+                            _landPosList2.Add(XYPosition);
                             // The new position will be even on the Y axis;
                             if (currentPos.y >= _maxLevelHeight || currentPos.y <= 0 || even)
                             {
@@ -198,140 +321,6 @@ namespace Furry
             SpawnLand(currentPos);
         }
 
-
-        /*
-        private Vector3 NextPosition(Vector3 currentPos)
-        {
-            bool foundAvailableArea = false;
-            Vector3 nextPos = new Vector3(0,0,0);
-            int iterations = 0;
-
-            while (!foundAvailableArea && iterations < 12)
-            {
-                Debug.Log("Iteration # " + iterations);
-                iterations++;
-                bool XAxis = Random.value > 0.5f;
-                bool positive = Random.value > 0.5f;
-                bool even = Random.value > 0.5f;
-                bool high = Random.value > 0.5f;
-
-                // The new position will be on the X axis;
-                if (XAxis)
-                {
-                    // The new position will be positive on the X axis;
-                    if (positive)
-                    {
-                        // The new position will be even on the Y axis;
-                        if (even)
-                        {
-                            nextPos = new Vector3(currentPos.x + _terrainOffsets.x, currentPos.y, currentPos.z);
-                        }
-                        // The new position will be higher on the Y axis;
-                        else if (high)
-                        {
-                            nextPos = new Vector3(currentPos.x + _terrainOffsets.x, currentPos.y + _terrainOffsets.y, currentPos.z);
-                        }
-                        // The new position will be lower on the Y axis;
-                        else
-                        {
-                            nextPos = new Vector3(currentPos.x + _terrainOffsets.x, currentPos.y - _terrainOffsets.y, currentPos.z);
-                        }
-                    }
-                    // The new position will be negative on the X axis;
-                    else
-                    {
-                        // The new position will be even on the Y axis;
-                        if (even)
-                        {
-                            nextPos = new Vector3(currentPos.x - _terrainOffsets.x, currentPos.y, currentPos.z);
-                        }
-                        // The new position will be higher on the Y axis;
-                        else if (high)
-                        {
-                            nextPos = new Vector3(currentPos.x - _terrainOffsets.x, currentPos.y + _terrainOffsets.y, currentPos.z);
-                        }
-                        // The new position will be lower on the Y axis;
-                        else
-                        {
-                            nextPos = new Vector3(currentPos.x - _terrainOffsets.x, currentPos.y - _terrainOffsets.y, currentPos.z);
-                        }
-                    }
-                }
-                // The new position will be on the Z axis;
-                else
-                {
-                    // The new position will be positive on the Z axis;
-                    if (positive)
-                    {
-                        // The new position will be even on the Y axis;
-                        if (even)
-                        {
-                            nextPos = new Vector3(currentPos.x, currentPos.y, currentPos.z + _terrainOffsets.x);
-                        }
-                        // The new position will be higher on the Y axis;
-                        else if (high)
-                        {
-                            nextPos = new Vector3(currentPos.x, currentPos.y + _terrainOffsets.y, currentPos.z + _terrainOffsets.x);
-                        }
-                        // The new position will be lower on the Y axis;
-                        else
-                        {
-                            nextPos = new Vector3(currentPos.x, currentPos.y - _terrainOffsets.y, currentPos.z + _terrainOffsets.x);
-                        }
-                    }
-                    // The new position will be negative on the Z axis;
-                    else
-                    {
-                        // The new position will be even on the Y axis;
-                        if (currentPos.y >= _maxLevelHeight || currentPos.y <= 0 || even)
-                        {
-                            nextPos = new Vector3(currentPos.x, currentPos.y, currentPos.z - _terrainOffsets.x);
-                        }
-                        // The new position will be higher on the Y axis;
-                        else if (currentPos.y < _maxLevelHeight && high)
-                        {
-                            nextPos = new Vector3(currentPos.x, currentPos.y + _terrainOffsets.y, currentPos.z - _terrainOffsets.x);
-                        }
-                        // The new position will be lower on the Y axis;
-                        else if (currentPos.y > _maxLevelHeight)
-                        {
-                            nextPos = new Vector3(currentPos.x, currentPos.y - _terrainOffsets.y, currentPos.z - _terrainOffsets.x);
-                        }
-                        else
-                        {
-                            nextPos = NextPosition(currentPos);
-                        }
-                    }
-                }
-                Vector2 XYPosition =  new Vector2(nextPos.x, nextPos.z);
-                if (_landPosList.Contains(XYPosition))
-                {
-                    nextPos = NextPosition(currentPos);
-                }
-                else
-                {
-                    foundAvailableArea = true;
-                }
-            }
-            Debug.Log("nextPos = " + nextPos);
-            return nextPos;
-        }
-        */
-
-
-        private void SpawnLand(Vector3 pos)
-        {
-            Vector2 currentPos = new Vector2(pos.x, pos.z);
-            _landPosList.Add(currentPos);
-            GameObject land = Instantiate(_terrains[Random.Range(0, _terrains.Count)], pos, Quaternion.identity);
-            _landObjectsList.Add(land);
-            land.transform.SetParent(transform);
-        }
-
-        private void OnDisable()
-        {
-            _nextPosCTS.Cancel();
-        }
     }
 
 }
