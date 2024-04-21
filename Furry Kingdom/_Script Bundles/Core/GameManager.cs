@@ -5,23 +5,28 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance { get; private set; }
+    [SerializeField] public Camera Camera;
 
     private void Awake()
     {
-#if (Unity_EDITOR)
+        if (Instance != null && Instance != this)
         {
-            Debug.unityLogger.logEnabled = true;
+            Destroy(this);
         }
-#else
+        else
         {
-            Debug.unityLogger.logEnabled = false;
+            Instance = this;
         }
-#endif
+
     }
 
     void Start()
     {
-        
+        if (Camera == null)
+        {
+            FindObjectOfType<Camera>();
+        }
     }
 
     // Update is called once per frame

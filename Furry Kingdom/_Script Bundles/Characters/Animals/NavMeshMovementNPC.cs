@@ -1,3 +1,4 @@
+using Furry;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -44,9 +45,9 @@ public class NavMeshMovementNPC : MonoBehaviour
         PendingArrival();
         _directionToPlayer = playerPosition - transform.position;
         _tryLocation = transform.position - _directionToPlayer;
-        _newLocation = TestNewLocation(_tryLocation, runRange);
+        _newLocation = LevelBuildingUtilities.TestNewLocation(_tryLocation, runRange);
 
-        if (_newLocation != Vector3.zero)
+        if (CheckPathReachable(_newLocation))
         {
             Move(_newLocation);
         }
@@ -65,30 +66,16 @@ public class NavMeshMovementNPC : MonoBehaviour
     {
         while (!ct.IsCancellationRequested && !Agent.hasPath)
         {
-            _newLocation = transform.position + Random.insideUnitSphere * range;
+            _tryLocation = transform.position + Random.insideUnitSphere * range;
+            _newLocation = LevelBuildingUtilities.TestNewLocation(_tryLocation, range);
 
-            if (TestNewLocation(_newLocation, range) != Vector3.zero)
+            if (CheckPathReachable(_newLocation))
             {
                 Move(_newLocation);
                 CancelGetNewLocation();
             }
             await Task.Yield();
         }
-    }
-    private Vector3 TestNewLocation(Vector3 location, float range)
-    {
-        NavMeshHit hit;
-
-        if (NavMesh.SamplePosition(location, out hit, range, NavMesh.AllAreas))
-        {
-            Debug.DrawRay(hit.position, Vector3.up, Color.blue, 2);
-
-            if (CheckPathReachable(hit.position))
-            {
-                return hit.position;
-            }
-        }
-        return Vector3.zero;
     }
     private bool CheckPathReachable(Vector3 position)
     {
@@ -109,8 +96,6 @@ public class NavMeshMovementNPC : MonoBehaviour
     {
         _moveCTS = new CancellationTokenSource();
         Agent.SetDestination(destination);
-
-      //  Debug.DrawRay(destination, Vector3.up, Color.red, 2);
 
         while (!Arrived && !_moveCTS.IsCancellationRequested)
         {
@@ -139,5 +124,7 @@ public class NavMeshMovementNPC : MonoBehaviour
         CancelMovingToDestination();
     }
 
+
+      //  Debug.DrawRay(destination, Vector3.up, Color.red, 2);
 
 }
