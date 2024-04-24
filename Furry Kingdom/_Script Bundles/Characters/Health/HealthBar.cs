@@ -6,17 +6,10 @@ using UnityEngine.UI;
 public class HealthBar : MonoBehaviour
 {
     [SerializeField] private Image _healthBar;
-    [SerializeField] private Camera _carmeraToLookAt;
-
-    private void Awake()
-    {
-        _carmeraToLookAt = GameManager.Instance.Camera;
-        GetComponent<Canvas>().worldCamera = _carmeraToLookAt;
-    }
+    public Camera _carmeraToLookAt {get; private set;}
 
     private void Start()
     {
-        
     }
     private void Update()
     {
@@ -25,5 +18,10 @@ public class HealthBar : MonoBehaviour
     public void UpdateHealthBar(int currentHealth, int maxHealth)
     {
         _healthBar.fillAmount = currentHealth / maxHealth;
+    }
+
+    public void SetCamera(Camera cameraToSet)
+    {
+        
     }
 }

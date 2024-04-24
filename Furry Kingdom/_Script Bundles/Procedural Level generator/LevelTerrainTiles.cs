@@ -28,10 +28,7 @@ public class LevelTerrainTiles : MonoBehaviour
             _tilesDict.Add("forest", _forestTerrains);
             _tilesDict.Add("mountain", _mountainTerrains);
         }
-        // Start is called before the first frame update
-        void Start()
-        {
-        }
+
         public GameObject ChooseTerrainTile(float height)
         {
             if (height > _maxForestHeight)
@@ -46,11 +43,10 @@ public class LevelTerrainTiles : MonoBehaviour
             {
                 return _tilesDict["desert"][Random.Range(0, _desertTerrains.Count)];
             }
-            else if (height > _maxWaterHeight)
+            else 
             {
                 return _tilesDict["grass"][Random.Range(0, _grassTerrains.Count)];
             }
-            return _tilesDict["water"][Random.Range(0, _waterTerrains.Count)];
         }
         public GameObject RandomWaterTile()
         {

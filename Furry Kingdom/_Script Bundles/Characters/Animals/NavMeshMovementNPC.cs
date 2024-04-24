@@ -14,7 +14,7 @@ public class NavMeshMovementNPC : MonoBehaviour
 
     private CancellationTokenSource _getNewLocationCTS;
     private CancellationTokenSource _moveCTS;
-    private Vector3 _tryLocation;
+    private Vector3 _tryPoint;
     private Vector3 _newLocation;
     private Vector3 _directionToPlayer;
 
@@ -44,8 +44,8 @@ public class NavMeshMovementNPC : MonoBehaviour
     {
         PendingArrival();
         _directionToPlayer = playerPosition - transform.position;
-        _tryLocation = transform.position - _directionToPlayer;
-        _newLocation = LevelBuildingUtilities.TestNewLocation(_tryLocation, runRange);
+        _tryPoint = transform.position - _directionToPlayer;
+        _newLocation = Utilities.TestNewLocation(_tryPoint, runRange);
 
         if (CheckPathReachable(_newLocation))
         {
@@ -66,8 +66,8 @@ public class NavMeshMovementNPC : MonoBehaviour
     {
         while (!ct.IsCancellationRequested && !Agent.hasPath)
         {
-            _tryLocation = transform.position + Random.insideUnitSphere * range;
-            _newLocation = LevelBuildingUtilities.TestNewLocation(_tryLocation, range);
+            _tryPoint = transform.position + Random.insideUnitSphere * range;
+            _newLocation = Utilities.TestNewLocation(_tryPoint, range);
 
             if (CheckPathReachable(_newLocation))
             {

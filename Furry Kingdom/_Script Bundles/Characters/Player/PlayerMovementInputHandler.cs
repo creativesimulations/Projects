@@ -48,7 +48,7 @@ namespace Furry
 
         public void Init()
         {
-            ActionMapName = "Player1";
+            ActionMapName = "Player1Land";
             _abilityAction = _playerControls.FindActionMap(ActionMapName).FindAction(_ability);
             _jumpAction = _playerControls.FindActionMap(ActionMapName).FindAction(_jump);
             _moveAction = _playerControls.FindActionMap(ActionMapName).FindAction(_movement);
@@ -59,13 +59,39 @@ namespace Furry
 
         private void RegisterInputActions()
         {
+            _abilityAction.performed += context => AbilityTriggered = true;
+            _abilityAction.canceled += context => AbilityTriggered = false;
+
+            _jumpAction.started += JumpHeld;
+            _jumpAction.canceled += JumpRelease;
+
             _rbJumpAction.started += context => OnRBJump?.Invoke();
 
             _moveAction.performed += Move;
             _moveAction.started += Moving;
             _moveAction.canceled += CancelMoving;
+
+            _rightMouseAction.performed += RightClick;
         }
 
+        public void RbJump(InputAction.CallbackContext context)
+        {
+        }
+        public void RightClick(InputAction.CallbackContext context)
+        {
+            OnRightClick?.Invoke();
+        }
+        public void JumpHeld(InputAction.CallbackContext context)
+        {
+            Debug.Log("On Jump held??");
+            JumpTriggered = true;
+            OnJumpHeld?.Invoke();
+        }
+        public void JumpRelease(InputAction.CallbackContext context)
+        {
+            JumpTriggered = false;
+            OnJumpRelease?.Invoke();
+        }
         public void Moving(InputAction.CallbackContext context)
         {
             MoveTriggered = true;
@@ -83,7 +109,10 @@ namespace Furry
 
         private void OnEnable()
         {
+            _abilityAction.Enable();
+            _jumpAction.Enable();
             _moveAction.Enable();
+            _rightMouseAction.Enable();
             _rbJumpAction.Enable();
         }
         private void OnDisable()

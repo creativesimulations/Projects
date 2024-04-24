@@ -15,13 +15,16 @@ namespace Furry
     public class ProceduralLevelGenerator : MonoBehaviour
     {
         public static event Action OnLevelGenerated;
+        public static event Action<List<GameObject>> OnTilesSet;
 
         [SerializeField] private int _terrainTileAmount = 100;
         [SerializeField] private int _maxLevelHeight = 12;
         [SerializeField] private int _maxLevelHorizontal;
+        [SerializeField, Range(0,500)] private int _waterTiles = 20;
         [SerializeField] private Vector2 _terrainOffsets = new Vector2(3f, .3f);
         [SerializeField] private Vector3 _seedPosition;
 
+        private int _spawnedWater = 0;
         private LevelTerrainTiles _terrainTiles;
         private Vector3 _currentPos;
         private Vector3[] _generationDirections;
@@ -54,13 +57,12 @@ namespace Furry
             {
                 await NextPosition(_nextPosCTS.Token);
             }
-            await FillWater(_nextPosCTS.Token);
-
-            NavMeshSurface[] _navmeshSurfaces = GetComponents<NavMeshSurface>();
-            LevelBuildingUtilities.BakeNavMeshes(_navmeshSurfaces);
-            // choose two random tiles and spawn the players
+            await OutlineWater(_nextPosCTS.Token);
+            await BakeNavMeshes();
+            OnTilesSet?.Invoke(_terrainObjects);
             OnLevelGenerated?.Invoke();
         }
+
         private async Task NextPosition(CancellationToken ct)
         {
             bool foundAvailableArea = false;
@@ -80,40 +82,41 @@ namespace Furry
                 else
                 {
                     iterations = 0;
-                    _currentPos = _terrainObjects[UnityEngine.Random.Range(0, _terrainObjects.Count)].transform.position + _generationDirections[UnityEngine.Random.Range(0, 11)];
+                    _currentPos = _terrainObjects[UnityEngine.Random.Range(0, _terrainObjects.Count)].transform.position;
                     potentialPos = _currentPos + _generationDirections[UnityEngine.Random.Range(0, 11)];
                     tries++;
                 }
                 if (PositionAvailable(potentialPos))
                 {
+                    tries = 0;
                     SpawnLand(potentialPos, _terrainTiles.ChooseTerrainTile(potentialPos.y));
                     foundAvailableArea = true;
                 }
                 iterations++;
-                await Task.Yield();
             }
+                await Task.Yield();
         }
-        private async Task FillWater(CancellationToken ct)
+        private async Task OutlineWater(CancellationToken ct)
         {
-            for (int i = 0; i < _terrainObjects.Count; i++)
-            {
-                Vector3 positiveX = new Vector3(_terrainObjects[i].transform.position.x + _generationDirections[0].x, 0, _terrainObjects[i].transform.position.z + +_generationDirections[0].z);
-                Vector3 negativeX = new Vector3(_terrainObjects[i].transform.position.x + _generationDirections[3].x, 0, _terrainObjects[i].transform.position.z + +_generationDirections[3].z);
-                Vector3 positiveZ = new Vector3(_terrainObjects[i].transform.position.x + _generationDirections[6].x, 0, _terrainObjects[i].transform.position.z + +_generationDirections[6].z);
-                Vector3 negativeZ = new Vector3(_terrainObjects[i].transform.position.x + _generationDirections[9].x, 0, _terrainObjects[i].transform.position.z + +_generationDirections[9].z);
-                WaterPosAvailable(positiveX);
-                WaterPosAvailable(negativeX);
-                WaterPosAvailable(positiveZ);
-                WaterPosAvailable(negativeZ);
-                await Task.Yield();
-            }
+                for (int i = 0; i < _waterTiles; i++)
+                {
+                if (_spawnedWater > _waterTiles)
+                {
+                    _nextPosCTS.Cancel();
+                }
+                    WaterPosAvailable(CalculateWaterPlacement(_terrainObjects[i].transform.position, _generationDirections[0]));
+                    WaterPosAvailable(CalculateWaterPlacement(_terrainObjects[i].transform.position, _generationDirections[3]));
+                    WaterPosAvailable(CalculateWaterPlacement(_terrainObjects[i].transform.position, _generationDirections[6]));
+                    WaterPosAvailable(CalculateWaterPlacement(_terrainObjects[i].transform.position, _generationDirections[9]));
+                }
+                    await Task.Yield();
         }
         private void WaterPosAvailable(Vector3 pos)
         {
             if (PositionAvailable(pos))
             {
-                GameObject land = Instantiate(_terrainTiles.ChooseTerrainTile(0), pos, Quaternion.Euler(0, (UnityEngine.Random.Range(0, 3) * 90), 0));
-                land.transform.SetParent(transform);
+                SpawnLand(pos, (_terrainTiles.RandomWaterTile()));
+                _spawnedWater++;
             }
         }
         private bool PositionAvailable(Vector3 nextPos)
@@ -142,6 +145,19 @@ namespace Furry
             _terrainObjects.Add(land);
             AddVectorsToLists(pos);
             _currentPos = pos;
+        }
+        private async Task BakeNavMeshes()
+        {
+            NavMeshSurface[] navmeshSurfaces = GetComponents<NavMeshSurface>();
+            foreach (var navMesh in navmeshSurfaces)
+            {
+                navMesh.BuildNavMesh();
+            }
+            await Task.Yield();
+        }
+        private Vector3 CalculateWaterPlacement(Vector3 origin, Vector3 addValue)
+        {
+            return new Vector3(origin.x + addValue.x, 12, origin.z + addValue.z);
         }
         private void OnDisable()
         {
