@@ -1,3 +1,4 @@
+/*
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using UnityEngine.InputSystem;
 namespace Furry
 {
 
-    public class PlayerInputHandler : MonoBehaviour
+    public class PlayerMovementInputHandler : MonoBehaviour
     {
         public event Action OnJumpHeld;
         public event Action OnJumpRelease;
@@ -126,3 +127,4 @@ namespace Furry
     }
 
 }
+*/

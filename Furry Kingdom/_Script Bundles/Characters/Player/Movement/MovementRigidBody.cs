@@ -19,7 +19,6 @@ namespace Furry
         private Vector3 _newTargetDirection; // The direction the player is moving towards
         private Quaternion _targetRotation;
         private Vector3 _raycastOrigin;
-        private RaycastHit _hit;
         private PlayerInputHandler _inputHandler;
         private CancellationTokenSource _turnCTS;
         private Rigidbody _rb;
@@ -39,14 +38,14 @@ namespace Furry
 
         private void FixedUpdate()
         {
-            Move();
+            if (_rb.velocity.magnitude < _maxVelocity)
+            {
+                Debug.Log("_rb.velocity.magnitude = " + _rb.velocity.magnitude);
+                _rb.AddForce(_moveForce * new Vector3(_inputHandler.MoveInput.x, 0, _inputHandler.MoveInput.y), ForceMode.Force);
+            }
         }
         public void Move()
         {
-            if (_rb.velocity.magnitude < _maxVelocity)
-            {
-                _rb.AddForce(_moveForce * new Vector3(_inputHandler.MoveInput.x, 0, _inputHandler.MoveInput.y), ForceMode.VelocityChange);
-            }
         }
 
         private void GetTurnInput()
@@ -82,13 +81,16 @@ namespace Furry
         }
         private bool CanJump()
         {
+        RaycastHit _hit;
             _raycastOrigin = transform.position + Vector3.up * 0.1f;
             if (Physics.Raycast(_raycastOrigin, Vector3.down, out _hit, .2f, _terrainLayer))
             {
+                Debug.Log("true");
                 return true;
             }
             else
             {
+                Debug.Log("false");
                 return false;
             }
         }

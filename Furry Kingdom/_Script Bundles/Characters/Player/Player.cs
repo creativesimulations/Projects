@@ -32,7 +32,7 @@ namespace Furry
             other.gameObject.TryGetComponent<IUseAbilities>(out IUseAbilities _useAbilities);
             if (_useAbilities != null)
             {
-                _abilityController.SetNewAbility(_useAbilities.GetAbilityName());
+              //  _abilityController.SetNewAbility(_useAbilities.GetAbilityName());
             }
         }
 

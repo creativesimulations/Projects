@@ -9,50 +9,33 @@ namespace Furry
 
     public class PlayerInputHandler : MonoBehaviour
     {
-        public event Action OnJumpHeld;
-        public event Action OnJumpRelease;
-        public event Action OnRightClick;
         public event Action OnMove;
         public event Action OnRBJump;
 
         [Header("Input Action References")]
         [Tooltip("Input Action Asset")]
-        [SerializeField] private InputActionAsset _playerControls;
+        private InputActionAsset _playerControls;
         [Tooltip("Action Map Name")]
-        [SerializeField] public string ActionMapName { get; set; }
+        [SerializeField] public string ActionMapName { get; private set; }
 
         [Header("Action Names")]
-        [SerializeField] private string _ability = "Ability";
-        [SerializeField] private string _jump = "Jump";
         [SerializeField] private string _movement = "Movement";
-        [SerializeField] private string _rightMouse = "MouseMovement";
         [SerializeField] private string _rbJump = "RigidBodyJump";
 
-        private InputAction _abilityAction;
-        private InputAction _jumpAction;
         private InputAction _moveAction;
-        private InputAction _rightMouseAction;
         private InputAction _rbJumpAction;
 
-        public bool AbilityTriggered { get; private set; }
         public bool JumpTriggered { get; private set; }
         public bool MoveTriggered { get; private set; }
         public Vector2 MoveInput { get; private set; }
-        public bool RightMouseClick { get; private set; }
 
         private void Awake()
         {
-            Init();
-        }
-
-
-        public void Init()
-        {
-            ActionMapName = "Player1";
-            _abilityAction = _playerControls.FindActionMap(ActionMapName).FindAction(_ability);
-            _jumpAction = _playerControls.FindActionMap(ActionMapName).FindAction(_jump);
+            _playerControls = GetComponent<PlayerInput>().actions;
+            string controls = string.Concat("Player", PlayerManager.Players.Count);
+            ActionMapName = controls;
+            _playerControls.FindActionMap(ActionMapName);
             _moveAction = _playerControls.FindActionMap(ActionMapName).FindAction(_movement);
-            _rightMouseAction = _playerControls.FindActionMap(ActionMapName).FindAction(_rightMouse);
             _rbJumpAction = _playerControls.FindActionMap(ActionMapName).FindAction(_rbJump);
             RegisterInputActions();
         }
@@ -80,7 +63,6 @@ namespace Furry
             MoveInput = context.ReadValue<Vector2>();
             OnMove?.Invoke();
         }
-
         private void OnEnable()
         {
             _moveAction.Enable();
@@ -88,10 +70,7 @@ namespace Furry
         }
         private void OnDisable()
         {
-            _abilityAction.Disable();
-            _jumpAction.Disable();
             _moveAction.Disable();
-            _rightMouseAction.Disable();
             _rbJumpAction.Disable();
         }
     }

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,16 +17,26 @@ namespace Furry
 
         private void Awake()
         {
-            ProceduralLevelGenerator.OnLevelGenerated += InitialSpawn;
+            ProceduralLevelGenerator.OnLevelGenerated += Spawn;
         }
-        private void InitialSpawn()
+        private void Spawn()
         {
-            if (_animalsToSpawn.Count > 0 && Random.value < spawnPercentage)
+            if (_tileAnimal == null && _animalsToSpawn.Count > 0 && Random.value < spawnPercentage)
             {
                 SpawnAnimal(_animalsToSpawn[Random.Range(0, _animalsToSpawn.Count)]);
             }
+            else
+            {
+                StartCoroutine(WaitToSpawn());
+            }
         }
-        private void SpawnAnimal(GameObject animalToSpawn)
+        private IEnumerator WaitToSpawn()
+        {
+            var secondsTillSpawn = new WaitForSecondsRealtime(Random.Range(10,20));
+
+            yield return secondsTillSpawn;
+        }
+                private void SpawnAnimal(GameObject animalToSpawn)
         {
             Vector3 pos = Utilities.TestNewLocation(transform.position, 200);
             _tileAnimal = Instantiate(animalToSpawn, pos, Quaternion.identity);
