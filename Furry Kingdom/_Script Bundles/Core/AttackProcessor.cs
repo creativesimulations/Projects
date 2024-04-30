@@ -9,12 +9,12 @@ public static class AttackProcessor
         {
             return attacker.Strength + 1;
         }
-        public static void ProcessMelee(IHaveStats attacker, IHaveHealth target)
+        public static void ProcessMelee(IHaveStats attacker, Character target)
         {
             int amount = CalculateAttackAmount(attacker);
 
         }
-        public static void ProcessAttack(IHaveHealth target, int amount)
+        public static void ProcessAttack(Character target, int amount)
         {
             target.ModifyCurrentHealth(amount);
         }

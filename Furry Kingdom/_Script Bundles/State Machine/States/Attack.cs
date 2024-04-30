@@ -39,14 +39,14 @@ namespace Furry
         {
             _target = _playerDetector.PlayerDetected;
             _animator.SetBool("isAttacking", true);
-            Debug.Log("Attacking");
+         //   Debug.Log("Attacking");
         }
 
 
         public void OnExit()
         {
             _animator.SetBool("isAttacking", false);
-            Debug.Log("Exit Attacking");
+          //  Debug.Log("Exit Attacking");
         }
 
         private void AttackTarget()

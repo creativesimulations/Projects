@@ -38,7 +38,7 @@ public class Flee : IState
 
         public void OnEnter()
         {
-            Debug.Log("Fleeing");
+         //   Debug.Log("Fleeing");
             _target = _playerDetector.PlayerDetected;
             _navMovement.SetMovementSpeed(_prey.Speed * _speedModifier);
             _runParticle.Play();
@@ -47,7 +47,7 @@ public class Flee : IState
 
         public void OnExit()
         {
-            Debug.Log("Exit Fleeing");
+         //   Debug.Log("Exit Fleeing");
             _navMovement.SetMovementSpeed(_prey.Speed);
             _navMovement.CancelGetNewLocation();
             _runParticle.Stop();

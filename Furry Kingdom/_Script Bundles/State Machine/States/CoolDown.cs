@@ -23,20 +23,19 @@ public class CoolDown : IState
         {
             if (Time.time >= _endCoolDownTime)
             {
-                Debug.Log("Calling Player Left");
             }
         }
 
         public void OnEnter()
         {
-            Debug.Log("Cooling Down");
+          //  Debug.Log("Cooling Down");
             _endCoolDownTime = Time.time + _coolDownTime;
             _animator.SetBool("isIdle", true);
         }
 
         public void OnExit()
         {
-            Debug.Log("EXITING Cooling Down");
+        //    Debug.Log("EXITING Cooling Down");
             _animator.SetBool("isIdle", false);
         }
 

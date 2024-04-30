@@ -5,10 +5,7 @@ namespace Furry
 {
     public class Player : Character, IChangeAbilities
     {
-
-        public Player()
-        {
-        }
+        [SerializeField] private Material _flagMat;
 
         protected override void Awake()
         {
@@ -16,23 +13,19 @@ namespace Furry
             Init();
         }
 
-        private void Start()
-        {
-        }
-
         public override void Init()
         {
             RegenAmount = _stats.RegenAmount;
             RegenSpeed = _stats.RegenSpeed;
-
         }
 
-        private void OnTriggerEnter(Collider other)
+        private void OnCollisionEnter(Collision collision)
         {
-            other.gameObject.TryGetComponent<IUseAbilities>(out IUseAbilities _useAbilities);
-            if (_useAbilities != null)
+            TileManager tM;
+            tM = collision.gameObject.GetComponentInParent<TileManager>();
+            if (tM != null)
             {
-              //  _abilityController.SetNewAbility(_useAbilities.GetAbilityName());
+                tM.ChangeFlag(_flagMat);
             }
         }
 

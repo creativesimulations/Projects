@@ -5,7 +5,7 @@ namespace Furry
 {
 
     [RequireComponent(typeof(AbilityController))]
-    public class Character : MonoBehaviour, IHaveHealth, IHaveStats, IUseAbilities, ICanRegen
+    public abstract class Character : MonoBehaviour, IHaveStats, IUseAbilities, ICanRegen
     {
         public int MaxHealth { get; set; }
         public int Strength { get; set; }
@@ -31,15 +31,6 @@ namespace Furry
             Init();
         }
 
-        void Start()
-        {
-
-        }
-
-        void Update()
-        {
-
-        }
         public virtual void Init()
         {
             MaxHealth = _stats.MaxHealth;
@@ -53,19 +44,6 @@ namespace Furry
             RegenSpeed = _stats.RegenSpeed;
         }
 
-        public virtual void TakeDamage()
-        {
-
-        }
-
-        public virtual void Attack()
-        {
-
-        }
-        public virtual void Heal()
-        {
-
-        }
         public virtual float ModifySpeed(float newSpeed)
         {
             return Speed = newSpeed;
@@ -104,11 +82,6 @@ namespace Furry
             {
                 // run another method to activate ability.
             }
-        }
-
-        void IHaveHealth.ModifyMaxHealth(int amount)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

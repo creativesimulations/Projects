@@ -1,3 +1,4 @@
+using MalbersAnimations.Utilities;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,19 +10,20 @@ namespace Furry
     {
 
         [SerializeField] private List<GameObject> _animalsToSpawn;
-        [SerializeField, Range(0, 1)] private float spawnPercentage = 0.5f;
+        [SerializeField, Range(0, 1)] private float _animalSpawnPercentage = 0.4f;
         [SerializeField] private GameObject _flag;
         [SerializeField] private GameObject _tileAnimal;
 
-        private bool[] _inSight = new bool[2];
+        private MeshRenderer _renderer;
 
         private void Awake()
         {
             ProceduralLevelGenerator.OnLevelGenerated += Spawn;
+            _renderer = _flag.GetComponent<MeshRenderer>();
         }
         private void Spawn()
         {
-            if (_tileAnimal == null && _animalsToSpawn.Count > 0 && Random.value < spawnPercentage)
+            if (_tileAnimal == null && _animalsToSpawn.Count > 0 && Random.value < _animalSpawnPercentage)
             {
                 SpawnAnimal(_animalsToSpawn[Random.Range(0, _animalsToSpawn.Count)]);
             }
@@ -39,9 +41,14 @@ namespace Furry
                 private void SpawnAnimal(GameObject animalToSpawn)
         {
             Vector3 pos = Utilities.TestNewLocation(transform.position, 200);
-            _tileAnimal = Instantiate(animalToSpawn, pos, Quaternion.identity);
+            _tileAnimal = Instantiate(animalToSpawn, pos, Quaternion.identity, transform.GetChild(0));
         }
-
+        public void ChangeFlag(Material flagMat)
+        {
+            Material[] newMaterials = _renderer.materials;
+            newMaterials[0] = flagMat;
+            _renderer.materials = newMaterials;
+        }
         public bool HasAnimal()
         {
             bool value = false;
@@ -50,37 +57,6 @@ namespace Furry
                 value = true;
             }
             return value;
-        }
-
-        public void ActivateAnimal()
-        {
-            if (_inSight[0] == true)
-            {
-                _inSight[1] = true;
-            }
-            else
-            {
-                _inSight[0] = true;
-                if (_tileAnimal != null)
-                {
-                    _tileAnimal.SetActive(true);
-                }
-            }
-        }
-        public void DeactivateAnimal()
-        {
-            if (_inSight[1] == true)
-            {
-                _inSight[1] = false;
-            }
-            else
-            {
-                _inSight[0] = false;
-                if (_tileAnimal != null)
-                {
-                    _tileAnimal.SetActive(false);
-                }
-            }
         }
         private void KillAnimal()
         {

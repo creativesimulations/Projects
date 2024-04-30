@@ -1,12 +1,15 @@
+using System;
+using System.Collections;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Furry
 {
-    [RequireComponent(typeof(PlayerInputHandler))]
     public class MovementRigidBody : MonoBehaviour
     {
+        public event Action OnJump;
+
         [SerializeField] private float _jumpForce = 5.5f;
         [SerializeField] private float _rotationSpeed = 5f; // Speed of rotation
         [SerializeField] private float _moveForce = .3f;
@@ -22,46 +25,50 @@ namespace Furry
         private PlayerInputHandler _inputHandler;
         private CancellationTokenSource _turnCTS;
         private Rigidbody _rb;
+        private bool _freeToMove = true;
+        private bool isJumping;
 
-        private void Awake()
+        protected void Awake()
         {
             _rb = GetComponent<Rigidbody>();
             _turnCTS = new CancellationTokenSource();
-            _inputHandler = GetComponent<PlayerInputHandler>();
         }
 
         private void Start()
         {
-            _inputHandler.OnMove += GetTurnInput;
-            _inputHandler.OnRBJump += RBJump;
+            _inputHandler = GetComponent<PlayerInputHandler>();
         }
 
         private void FixedUpdate()
         {
-            if (_rb.velocity.magnitude < _maxVelocity)
+            if (_freeToMove)
             {
-                Debug.Log("_rb.velocity.magnitude = " + _rb.velocity.magnitude);
-                _rb.AddForce(_moveForce * new Vector3(_inputHandler.MoveInput.x, 0, _inputHandler.MoveInput.y), ForceMode.Force);
+                Move();
+                GetTurnInput();
+                if (_inputHandler.JumpTriggered)
+                {
+                    RBJump();
+                }
             }
         }
         public void Move()
         {
+                _rb.AddForce(_moveForce * new Vector3(_inputHandler.MoveInput.x, 0, _inputHandler.MoveInput.y), ForceMode.Force);
         }
 
         private void GetTurnInput()
         {
-            _targetDirection = new Vector3(_inputHandler.MoveInput.x, 0, _inputHandler.MoveInput.y).normalized;
-            _targetRotation = Quaternion.LookRotation(_targetDirection, Vector3.up);
+            _newTargetDirection = new Vector3(_inputHandler.MoveInput.x, 0, _inputHandler.MoveInput.y).normalized;
+            _targetRotation = Quaternion.LookRotation(_newTargetDirection, Vector3.up);
 
             if ((_targetDirection != _newTargetDirection) && !isTurning)
             {
-                Turn();
+                Turn(_turnCTS.Token);
             }
         }
 
-        private async void Turn()
+        private async void Turn(CancellationToken ct)
         {
-            _newTargetDirection = _targetDirection;
             isTurning = true;
             while (_inputHandler.MoveTriggered)
             {
@@ -69,32 +76,41 @@ namespace Furry
 
                 await Task.Yield();
             }
+            _targetDirection = transform.forward;
             isTurning = false;
-            _turnCTS?.Cancel();
         }
         private void RBJump()
         {
             if (CanJump())
             {
                 _rb.AddForce(Vector3.up * _jumpForce, ForceMode.VelocityChange);
+                OnJump?.Invoke();
             }
         }
         private bool CanJump()
         {
-        RaycastHit _hit;
+            RaycastHit _hit;
             _raycastOrigin = transform.position + Vector3.up * 0.1f;
             if (Physics.Raycast(_raycastOrigin, Vector3.down, out _hit, .2f, _terrainLayer))
             {
-                Debug.Log("true");
                 return true;
             }
-            else
-            {
-                Debug.Log("false");
-                return false;
-            }
+            return false;
         }
 
+        public void ResetLocation(Vector3 location)
+        {
+            _rb.velocity = Vector3.zero;
+            transform.position = location;
+        }
+        public void StopMovement()
+        {
+            _freeToMove = false;
+        }
+        public void ResumeMovement()
+        {
+            _freeToMove = true;
+        }
         private void OnDisable()
         {
             _inputHandler.OnMove -= GetTurnInput;

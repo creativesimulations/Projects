@@ -8,29 +8,19 @@ namespace Furry
 
 public class OffMap : MonoBehaviour
 {
-    void Start()
-    {
-        
-    }
-
-    void Update()
-    {
-        
-    }
         private void OnTriggerEnter(Collider other)
         {
-            Player player;
-                other.gameObject.TryGetComponent<Player>(out player);
-            if (player != null)
+            if (other.gameObject.TryGetComponent(out MovementRigidBody player))
             {
                 Vector3 teleportLocation = Utilities.TestNewLocation(other.transform.position, 100);
-                StartCoroutine(TeleportToMap(other.gameObject, teleportLocation));
+                StartCoroutine(TeleportToMap(player, teleportLocation));
             }
         }
-        private IEnumerator TeleportToMap(GameObject player, Vector3 location)
+        private IEnumerator TeleportToMap(MovementRigidBody player, Vector3 location)
         {
+            Debug.Log("Teleport called");
             yield return new WaitForSeconds(3);
-            player.transform.position = location;
+            player.ResetLocation(location);
         }
     }
 }

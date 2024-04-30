@@ -8,19 +8,20 @@ using System;
 
 public class PlayerManager : MonoBehaviour
 {
-    public static event Action<string> OnJoin;
+    public static event Action<List<GameObject>> OnPlayersSet;
 
     [SerializeField] private GameObject _playerPrefab;
-    [SerializeField] private List<LayerMask> _playerLayerMask;
+    [SerializeField] private List<GameObject> _playerPrefabs;
     private int _numPlayers;
 
-    public static List<PlayerInput> Players {  get; private set; }
+    public static List<PlayerInput> PlayerInputs {  get; private set; }
+    private List<GameObject> PlayerObjects = new List<GameObject>();
 
     private CancellationTokenSource _cts = new CancellationTokenSource();
 
     private void Awake()
     {
-        Players = new List<PlayerInput>();
+        PlayerInputs = new List<PlayerInput>();
     }
 
     void Start()
@@ -37,7 +38,7 @@ public class PlayerManager : MonoBehaviour
         CancellationToken ct = _cts.Token;
         for (int i = 1; i <= _numPlayers; i++)
         {
-            GameObject playerPrefab = _playerPrefab;
+            GameObject playerPrefab = _playerPrefabs[i-1];
             bool placed = false;
             while (!placed && !ct.IsCancellationRequested)
             {
@@ -50,19 +51,21 @@ public class PlayerManager : MonoBehaviour
                 await Task.Yield();
             }
         }
+        OnPlayersSet?.Invoke(PlayerObjects);
     }
     private void SpawnPlayer(GameObject playerToSpawn, Vector3 pos, int playerNum)
     {
         Vector3 playerPos = Utilities.TestNewLocation(pos, 200);
-        Instantiate(playerToSpawn, playerPos, Quaternion.identity, transform);
+        GameObject newPlayer = Instantiate(playerToSpawn, playerPos, Quaternion.identity, transform);
+        PlayerObjects.Add(newPlayer);
     }
 
     void OnPlayerJoined(PlayerInput playerInput)
     {
-        Players.Add(playerInput);
+        PlayerInputs.Add(playerInput);
     }
     void OnPlayerLeft(PlayerInput playerInput)
     {
-        Players.Remove(playerInput);
+        PlayerInputs.Remove(playerInput);
     }
 }

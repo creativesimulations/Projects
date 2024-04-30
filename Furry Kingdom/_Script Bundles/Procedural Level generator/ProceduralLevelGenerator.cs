@@ -20,7 +20,7 @@ namespace Furry
         [SerializeField] private int _terrainTileAmount = 100;
         [SerializeField] private int _maxLevelHeight = 12;
         [SerializeField] private int _maxLevelHorizontal;
-        [SerializeField, Range(0,500)] private int _waterTiles = 20;
+        [SerializeField, Range(0,1000)] private int _waterTiles = 20;
         [SerializeField] private Vector2 _terrainOffsets = new Vector2(3f, .3f);
         [SerializeField] private Vector3 _seedPosition;
 
@@ -71,11 +71,11 @@ namespace Furry
             Vector3 potentialPos;
             while (!foundAvailableArea && !ct.IsCancellationRequested)
             {
-                if (tries > 10)
+                if (tries > 20)
                 {
                     _nextPosCTS.Cancel();
                 }
-                if (iterations < 2)
+                if (iterations < 3)
                 {
                     potentialPos = _currentPos + _generationDirections[UnityEngine.Random.Range(0, 11)];
                 }

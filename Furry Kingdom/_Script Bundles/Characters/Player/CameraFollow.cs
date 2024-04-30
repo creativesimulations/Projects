@@ -1,3 +1,4 @@
+using Furry;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,20 +15,13 @@ public class CameraFollow : MonoBehaviour
 
     private Vector3 _velocity = Vector3.zero;
 
-    void Start()
-    {
-        CenterOnTarget();
-    }
-
-    // Update is called once per frame
     private void Update()
+    {
+        Follow();
+    }
+    private void Follow()
     {
         Vector3 desiredPosition = _objectToFollow.position + _offset;
         transform.position = Vector3.SmoothDamp(transform.position, desiredPosition, ref _velocity, _smoothSpeed);
-    }
-
-    private void CenterOnTarget()
-    {
-
     }
 }

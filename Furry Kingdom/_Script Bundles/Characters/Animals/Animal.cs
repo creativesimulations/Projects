@@ -7,7 +7,7 @@ namespace Furry
 {
 
     [RequireComponent(typeof(NavMeshMovementNPC))]
-    public class Animal : Character
+    public abstract class Animal : Character
     {
         [Tooltip("The maximum time the animal will idle in one location.")]
         [SerializeField] protected float _maxIdleTime;

@@ -47,7 +47,7 @@ public class NavMeshMovementNPC : MonoBehaviour
         _tryPoint = transform.position - _directionToPlayer;
         _newLocation = Utilities.TestNewLocation(_tryPoint, runRange);
 
-        if (CheckPathReachable(_newLocation))
+        if (_newLocation != Vector3.zero && CheckPathReachable(_newLocation))
         {
             Move(_newLocation);
         }

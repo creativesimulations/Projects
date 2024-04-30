@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        ProceduralLevelGenerator.OnLevelGenerated += Play;
+        ProceduralLevelGenerator.OnLevelGenerated += Init;
     }
 
     /// <summary>
@@ -62,5 +62,9 @@ public class GameManager : MonoBehaviour
         GameState = GameStates.Paused;
         OnPause?.Invoke();
         //   PauseGameTime();
+    }
+    private void Init()
+    {
+        Play();
     }
 }
