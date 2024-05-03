@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Furry
@@ -18,6 +16,9 @@ namespace Furry
             _renderers = GetComponentsInChildren<MeshRenderer>();
         }
 
+        /// <summary>
+        /// Turns on the renderers that are on this object.
+        /// </summary>
         public void ActivateRenderers()
         {
             _camerasRendering++;
@@ -30,6 +31,10 @@ namespace Furry
                 _isRendering = true;
             }
         }
+
+        /// <summary>
+        /// Turns off the renderers that are on this object.
+        /// </summary>
         public void DeActivateRenderers()
         {
             if (_camerasRendering > 0)

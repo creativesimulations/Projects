@@ -1,0 +1,6 @@
+Instructions how to use the stats scriptable objects
+====================================================
+
+1. Inherit the IHaveStats interface.
+2. Create a new scriptable object of your new stats from the Stats dropdown.
+3. Make a field for "StatsScriptable" in your script and reference the desired stats scriptable object.

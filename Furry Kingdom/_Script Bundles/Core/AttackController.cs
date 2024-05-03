@@ -1,16 +1,13 @@
 using System.Threading.Tasks;
 using UnityEngine;
 
+// NOT IMPLEMENTED YET ***
+
 namespace Furry
 {
 
-public static class AttackController 
+    public static class AttackController
     {
-    private static void ActivateAbility(string abilityName)
-    {
-         //   AbilityFactory.GetAbility(newAbility).Use(gameObject, gameObject);
-        }
-
         public static int DamageAmount(int strength)
         {
             throw new System.NotImplementedException();
@@ -20,13 +17,10 @@ public static class AttackController
         {
             float distance = Vector3.Distance(attacker.position, target.position);
             while (distance > attackDistance)
-                {
-                    distance = Vector3.Distance(attacker.position, target.position);
-                    await Task.Yield();
-                    Debug.Log("distance is " + distance);
-                }
-
-            Debug.Log("Got you!");
+            {
+                distance = Vector3.Distance(attacker.position, target.position);
+                await Task.Yield();
+            }
         }
     }
 

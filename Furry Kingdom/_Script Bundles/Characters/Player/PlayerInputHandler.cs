@@ -1,7 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.ShaderGraph;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -24,6 +21,7 @@ namespace Furry
         [SerializeField] private string _movement = "Movement";
         [SerializeField] private string _rbJump = "RigidBodyJump";
 
+        private const string _player = "Player";
         private InputAction _moveAction;
         private InputAction _rbJumpAction;
 
@@ -34,8 +32,7 @@ namespace Furry
         protected virtual void Awake()
         {
             _playerControls = GetComponent<PlayerInput>().actions;
-            string controls = string.Concat("Player", PlayerManager.PlayerInputs.Count);
-            Debug.Log(controls);
+            string controls = string.Concat(_player, PlayerManager._playerInputs.Count);
             ActionMapName = controls;
             _playerControls.FindActionMap(ActionMapName);
             _moveAction = _playerControls.FindActionMap(ActionMapName).FindAction(_movement);
@@ -43,6 +40,9 @@ namespace Furry
             RegisterInputActions();
         }
 
+        /// <summary>
+        /// Register input actions from the action map;
+        /// </summary>
         private void RegisterInputActions()
         {
             _rbJumpAction.started += context => JumpTriggered = true;
@@ -53,25 +53,45 @@ namespace Furry
             _moveAction.canceled += CancelMoving;
         }
 
+        /// <summary>
+        /// This is called when there is a callback from the move action.
+        /// </summary>
+        /// <param name="context"></param> The callback context.
         public void Moving(InputAction.CallbackContext context)
         {
             MoveTriggered = true;
         }
+
+        /// <summary>
+        /// This is called when there is a callback from cancelling the move action.
+        /// </summary>
+        /// <param name="context"></param> The callback context.
         public void CancelMoving(InputAction.CallbackContext context)
         {
             MoveInput = Vector2.zero;
             MoveTriggered = false;
             OnStop?.Invoke();
         }
+
+        /// <summary>
+        /// This is called when there is a callback from beginning move action.
+        /// </summary>
+        /// <param name="context"></param> The callback context.
         public void Move(InputAction.CallbackContext context)
         {
             MoveInput = context.ReadValue<Vector2>();
             OnMove?.Invoke();
         }
+
+        /// <summary>
+        /// This is called when there is a callback from the jump action.
+        /// </summary>
+        /// <param name="context"></param> The callback context.
         public void Jumping(InputAction.CallbackContext context)
         {
             OnRBJump?.Invoke();
         }
+
         private void OnEnable()
         {
             _moveAction.Enable();

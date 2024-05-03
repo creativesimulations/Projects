@@ -1,0 +1,19 @@
+Instructions how to use the Procedural Level Generator
+=======================================
+
+1. Add the "ProceduralLevelGenerator" script to an object in the scene.
+2. Set the maximum number of terrain tiles desired, the maximum height and width (horizontal).
+3. Set the maximum water tiles desired.
+4. Set the x and y offests for the tiles.
+	The x offest is determined by the width of the tiles.
+	The y offset is determined by the jump height of the player.
+5. Set where the level should begin generating from. The default is 0,0,0;
+
+6. Attach the "LevelTerrainTiles" script to the same game object.
+7. Attach all desired NavMeshSurface components to the same object.
+8. Add all of the terrain prefab variations that you want to the LevelTerrainTiles lists and set their maximum heights.
+	The lowest tiles should be the water tiles, next the grass tiles, then desert tiles, forest tiles and mountain tiles should be the highest.
+
+9. Add the "OffMap" script to a child of the same game object. This notifies the player that it has fallen off of the map and needs to be reset.
+10. Set the box collider size and location to encompase the x and z axis of the entire map and as far below the map as desired.
+11. Add the "TileManager" script to an object that you want to be the parent of all of the level terrain tiles.

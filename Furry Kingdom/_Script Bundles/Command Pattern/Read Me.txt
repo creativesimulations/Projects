@@ -1,0 +1,5 @@
+Instructions how to use Command
+===============================
+
+1. Add a NavmeshAgent to the object.
+2. Add the "CommandControllerBot" script to the object to give it the ability to hold execute commands when the previous command is finished.

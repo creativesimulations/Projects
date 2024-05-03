@@ -1,8 +1,4 @@
-using System;
-using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.UIElements;
 
 namespace Furry
 {
@@ -13,17 +9,18 @@ public class Flee : IState
         private Animator _animator;
         ParticleSystem _runParticle;
         private Player _target;
-        private Prey _prey;
+        private int _speed;
         private float _speedModifier = 1.5f;
         private PlayerDetector _playerDetector;
         private float _runRange;
-        public Flee(NavMeshMovementNPC npcNavMovement, Animator animator, ParticleSystem runParticle, PlayerDetector playerDetector, Prey prey, float runRange)
+
+        public Flee(NavMeshMovementNPC npcNavMovement, Animator animator, ParticleSystem runParticle, PlayerDetector playerDetector, int speed, float runRange)
         {
             _navMovement = npcNavMovement;
             _animator = animator;
             _runParticle = runParticle;
             _playerDetector = playerDetector;
-            _prey = prey;
+            _speed = speed;
             _runRange = runRange;
         }
 
@@ -40,7 +37,7 @@ public class Flee : IState
         {
          //   Debug.Log("Fleeing");
             _target = _playerDetector.PlayerDetected;
-            _navMovement.SetMovementSpeed(_prey.Speed * _speedModifier);
+            _navMovement.SetMovementSpeed(_speed * _speedModifier);
             _runParticle.Play();
             _animator.SetBool("isFleeing", true);
         }
@@ -48,7 +45,7 @@ public class Flee : IState
         public void OnExit()
         {
          //   Debug.Log("Exit Fleeing");
-            _navMovement.SetMovementSpeed(_prey.Speed);
+            _navMovement.SetMovementSpeed(_speed);
             _navMovement.CancelGetNewLocation();
             _runParticle.Stop();
             _animator.SetBool("isFleeing", false);

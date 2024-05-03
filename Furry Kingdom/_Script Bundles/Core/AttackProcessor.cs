@@ -1,4 +1,6 @@
 
+// NOT IMPLEMENTED YET ***
+
 namespace Furry
 {
 
@@ -16,7 +18,7 @@ public static class AttackProcessor
         }
         public static void ProcessAttack(Character target, int amount)
         {
-            target.ModifyCurrentHealth(amount);
+          
         }
 
         /*

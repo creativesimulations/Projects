@@ -1,0 +1,5 @@
+Instructions how to use the GameManager
+=======================================
+
+1. Add the "GameManager" script to an object in the scene.
+2. The GameManager states can be changed with its method "SwitchState";

@@ -6,113 +6,133 @@ namespace Furry
     [CreateAssetMenu(fileName = "Stats", menuName = "Furry/Characters/Stats")]
     public class StatsScriptable : ScriptableObject
     {
-        [SerializeField] public int MaxHealth;
-        [SerializeField] public int Strength;
-        [SerializeField] public int Constitution;
-        [SerializeField] public int Stamina;
-        [SerializeField] public int Agility;
-        [SerializeField] public int Speed;
-        [SerializeField] public int RegenAmount;
-        [SerializeField] public float RegenSpeed;
-        public int CurrentHealth { get; private set; }
+        [Header("Stats Fields")]
+        [Tooltip("Effects damage amount.")]
+        [SerializeField] public int _strength;
+        [Tooltip("Effects maximum health amount.")]
+        [SerializeField] public int _constitution;
+        [Tooltip("Effects attack resistance.")]
+        [SerializeField] public int _stamina;
+        [Tooltip("Effects attack speed.")]
+        [SerializeField] public int _agility;
+        [Tooltip("Effects movement speed.")]
+        [SerializeField] public int _speed;
+        [Tooltip("Effects regengeration amount per second.")]
+        [SerializeField] public int _regenAmount;
+        [Tooltip("Effects regeneration speed over time.")]
+        [SerializeField] public float _regenSpeed;
 
-        public void ModifyMaxHealth(int amount)
+        /// <summary>
+        /// Decrease an amount from the strength stat.
+        /// </summary>
+        /// <param name="Amount"></param> the amount to decrease from the strength stat.
+        public void DecreaseStrength(int Amount)
         {
-            MaxHealth += amount;
-        }
-        public void ModifyCurrentHealth(bool add, int amount)
-        {
-            if (add)
-            {
-                CurrentHealth += amount;
-            }
-            else
-            {
-                CurrentHealth -= amount;
-            }
         }
 
-public void ModifyStrength(bool add, int amount)
+        /// <summary>
+        /// Decrease an amount from the constitution stat.
+        /// </summary>
+        /// <param name="Amount"></param> the amount to decrease from the constitution stat.
+        public void DecreaseConstitution(int Amount)
         {
-            if (add)
-            {
-                Strength += amount;
-            }
-            else
-            {
-                Strength -= amount;
-            }
         }
 
-        public void ModifyConstitution(bool add, int amount)
+        /// <summary>
+        /// Decrease an amount from the stamina stat.
+        /// </summary>
+        /// <param name="Amount"></param> the amount to decrease from the stamina stat.
+        public void DecreaseStamina(int Amount)
         {
-            if (add)
-            {
-                Constitution += amount;
-            }
-            else
-            {
-                Constitution -= amount;
-            }
         }
 
-        public void ModifyStamina(bool add, int amount)
+        /// <summary>
+        /// Decrease an amount from the agility stat.
+        /// </summary>
+        /// <param name="Amount"></param> the amount to decrease from the agility stat.
+        public void DecreaseAgility(int Amount)
         {
-            if (add)
-            {
-                Stamina += amount;
-            }
-            else
-            {
-                Stamina -= amount;
-            }
         }
 
-        public void ModifyAgility(bool add, int amount)
+        /// <summary>
+        /// Decrease an amount from the speed stat.
+        /// </summary>
+        /// <param name="Amount"></param> the amount to decrease from the speed stat.
+        public void DecreaseSpeed(int Amount)
         {
-            if (add)
-            {
-                Agility += amount;
-            }
-            else
-            {
-                Agility -= amount;
-            }
+        }
+        /// <summary>
+        /// Decrease an amount from the regeneration stat.
+        /// </summary>
+        /// <param name="Amount"></param> the amount to decrease from the regeneration stat.
+        public void DecreaseRegenAmount(int Amount)
+        {
         }
 
-        public void ModifyRegenSpeed(bool add, float amount)
+        /// <summary>
+        /// Decrease an amount from the regeneration speed stat.
+        /// </summary>
+        /// <param name="Amount"></param> the amount to decrease from the regeneration speed stat.
+        public void DecreaseRegenSpeed(float Amount)
         {
-            if (add)
-            {
-                RegenSpeed += amount;
-            }
-            else
-            {
-                RegenSpeed -= amount;
-            }
         }
 
-        public void ModifyRegenAmount(bool add, int amount)
+
+
+        /// <summary>
+        /// Increase an amount from the strength stat.
+        /// </summary>
+        /// <param name="Amount"></param> the amount to increase from the strength stat.
+        public void IncreaseStrength(int Amount)
         {
-            if (add)
-            {
-                RegenAmount += amount;
-            }
-            else
-            {
-                RegenAmount -= amount;
-            }
         }
-        public void ModifySpeed(bool add, int amount)
+
+        /// <summary>
+        /// Increase an amount from the constitution stat.
+        /// </summary>
+        /// <param name="Amount"></param> the amount to increase from the constitution stat.
+        public void IncreaseConstitution(int Amount)
         {
-            if (add)
-            {
-                RegenAmount += amount;
-            }
-            else
-            {
-                RegenAmount -= amount;
-            }
+        }
+
+        /// <summary>
+        /// Increase an amount from the stamina stat.
+        /// </summary>
+        /// <param name="Amount"></param> the amount to increase from the stamina stat.
+        public void IncreaseStamina(int Amount)
+        {
+        }
+
+        /// <summary>
+        /// Increase an amount from the agility stat.
+        /// </summary>
+        /// <param name="Amount"></param> the amount to increase from the agility stat.
+        public void IncreaseAgility(int Amount)
+        {
+        }
+
+        /// <summary>
+        /// Increase an amount from the speed stat.
+        /// </summary>
+        /// <param name="Amount"></param> the amount to increase from the speed stat.
+        public void IncreaseSpeed(int Amount)
+        {
+        }
+
+        /// <summary>
+        /// Increase an amount from the regeneration stat.
+        /// </summary>
+        /// <param name="Amount"></param> the amount to increase from the regeneration stat.
+        public void IncreaseRegenAmount(int Amount)
+        {
+        }
+
+        /// <summary>
+        /// Increase an amount from the regeneration speed stat.
+        /// </summary>
+        /// <param name="Amount"></param> the amount to increase from the regeneration speed stat.
+        public void IncreaseRegenSpeed(float Amount)
+        {
         }
 
     }

@@ -3,8 +3,8 @@ using UnityEngine;
 namespace Furry
 {
 
-public class Walk : IState
-{
+    public class Walk : IState
+    {
         private NavMeshMovementNPC _navMovement;
         private Animator _animator;
         private float _walkRange;

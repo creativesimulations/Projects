@@ -1,0 +1,9 @@
+Instructions how to create an animal
+====================================
+
+1. Attach either a "Prey" or a "Predator" script to the animal prefab.
+2. Attach the "NavMeshMovementNPC" script to the animal prefab.
+3. Attach a "Player Detector" prefab to the animal prefab.
+4. Attach a capsule collider to the animal prefab and set the radisu and size according to the size of the prefab.
+5. Attach and Animator component to the player prefab.
+6. Set the serialized fields on the various components as desired.

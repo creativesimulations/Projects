@@ -1,0 +1,8 @@
+The Character script is an abstract class which can be inherited by more specific classes of characters.
+It inherits the "IHaveStats" and "IHaveAbilities" interfaces.
+
+Instructions how to implement a Character
+===================================
+
+1. Inherit the "Character" script.
+2. Attach the "AbilityController" script to the Character gamebject.

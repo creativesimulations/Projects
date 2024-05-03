@@ -1,0 +1,6 @@
+Instructions how to implement the Main Menu
+===================================
+
+1. Add the "MainMenu" script to an object to the root UI object in the scene.
+2. Add the "MaimMenu" script as an event to each of the player amount buttons on the UI canvas.
+3. Choose the method "ChoosePlayer" with the accompanying player amount for the required int.

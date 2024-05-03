@@ -12,11 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b8dcf133a2d1db4aa5804457a5baabc, type: 3}
   m_Name: Lizrad Stats
   m_EditorClassIdentifier: 
-  MaxHealth: 100
-  Strength: 1
-  Constitution: 2
-  Stamina: 4
-  Agility: 6
-  Speed: 4
-  RegenAmount: 4
-  RegenSpeed: 6
+  _strength: 1
+  _constitution: 4
+  _stamina: 3
+  _agility: 6
+  _speed: 6
+  _regenAmount: 3
+  _regenSpeed: 3

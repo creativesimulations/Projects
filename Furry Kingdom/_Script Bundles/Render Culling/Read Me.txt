@@ -1,0 +1,7 @@
+Instructions how to implement Render Culling
+===================================
+
+1. Attach the "Derender" script to an object in the main scene.
+2. Attach the "DerenderSensor" script to an object which will activate and deactive the nearby renderers.
+3. Set the trigger collider on this object to the desired size.
+4. Attach the "RendererToggle" script to all objects that you want to toggle the renderers on.

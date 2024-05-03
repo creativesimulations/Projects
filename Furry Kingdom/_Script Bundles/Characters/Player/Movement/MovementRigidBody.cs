@@ -6,27 +6,35 @@ using UnityEngine;
 
 namespace Furry
 {
+    [RequireComponent(typeof(Rigidbody))]
+    [RequireComponent(typeof(CapsuleCollider))]
     public class MovementRigidBody : MonoBehaviour
     {
+        /// <summary>
+        /// This is invoked when the player jumps.
+        /// </summary>
         public event Action OnJump;
 
+        [Header("Movement field")]
+        [Tooltip("Amount of force used to jump.")]
         [SerializeField] private float _jumpForce = 5.5f;
-        [SerializeField] private float _rotationSpeed = 5f; // Speed of rotation
+        [Tooltip("Turn speed.")]
+        [SerializeField] private float _rotationSpeed = 5f;
+        [Tooltip("Amount of force used to move.")]
         [SerializeField] private float _moveForce = .3f;
-        [SerializeField] private float _maxVelocity = 2f;
 
+        [Tooltip("Layer name for the walkable terrain of the player.")]
         [SerializeField] private LayerMask _terrainLayer;
 
         private bool isTurning;
-        private Vector3 _targetDirection; // The direction the player is moving towards
-        private Vector3 _newTargetDirection; // The direction the player is moving towards
+        private Vector3 _targetDirection;
+        private Vector3 _newTargetDirection;
         private Quaternion _targetRotation;
         private Vector3 _raycastOrigin;
         private PlayerInputHandler _inputHandler;
         private CancellationTokenSource _turnCTS;
         private Rigidbody _rb;
         private bool _freeToMove = true;
-        private bool isJumping;
 
         protected void Awake()
         {
@@ -51,11 +59,17 @@ namespace Furry
                 }
             }
         }
+        /// <summary>
+        /// Apply force to the player for movement.
+        /// </summary>
         public void Move()
         {
-                _rb.AddForce(_moveForce * new Vector3(_inputHandler.MoveInput.x, 0, _inputHandler.MoveInput.y), ForceMode.Force);
+            _rb.AddForce(_moveForce * new Vector3(_inputHandler.MoveInput.x, 0, _inputHandler.MoveInput.y), ForceMode.Force);
         }
 
+        /// <summary>
+        /// Check if there is new turn input. If so, the async method Turn will run.
+        /// </summary>
         private void GetTurnInput()
         {
             _newTargetDirection = new Vector3(_inputHandler.MoveInput.x, 0, _inputHandler.MoveInput.y).normalized;
@@ -67,6 +81,10 @@ namespace Furry
             }
         }
 
+        /// <summary>
+        /// Turns the player while it hasn't yet reached the new turn rotation and isn't canceled.
+        /// </summary>
+        /// <param name="ct"></param> Cancellation token
         private async void Turn(CancellationToken ct)
         {
             isTurning = true;
@@ -79,6 +97,10 @@ namespace Furry
             _targetDirection = transform.forward;
             isTurning = false;
         }
+
+        /// <summary>
+        /// Apply force for the player to jump.
+        /// </summary>
         private void RBJump()
         {
             if (CanJump())
@@ -87,6 +109,11 @@ namespace Furry
                 OnJump?.Invoke();
             }
         }
+
+        /// <summary>
+        /// Returns true if the player is grounded.
+        /// </summary>
+        /// <returns></returns>
         private bool CanJump()
         {
             RaycastHit _hit;
@@ -98,19 +125,32 @@ namespace Furry
             return false;
         }
 
+        /// <summary>
+        /// Stops movement of the player and resets its location.
+        /// </summary>
+        /// <param name="location"></param> The location the player will be reset to.
         public void ResetLocation(Vector3 location)
         {
             _rb.velocity = Vector3.zero;
             transform.position = location;
         }
-        public void StopMovement()
+
+        /// <summary>
+        /// Prevents the player from moving.
+        /// </summary>
+        public void PauseMovement()
         {
             _freeToMove = false;
         }
+
+        /// <summary>
+        /// Allows the player to continue moving.
+        /// </summary>
         public void ResumeMovement()
         {
             _freeToMove = true;
         }
+
         private void OnDisable()
         {
             _inputHandler.OnMove -= GetTurnInput;

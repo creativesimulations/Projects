@@ -12,6 +12,9 @@ namespace Furry
         private List<Transition> _anyTransitions = new List<Transition>();
         private static List<Transition> EmptyTransitions = new List<Transition>(0);
 
+        /// <summary>
+        /// Run the Tick method in the curent state.
+        /// </summary>
         public void Tick()
         {
             var transition = GetTransition();
@@ -23,6 +26,10 @@ namespace Furry
             _currentState?.Tick();
         }
 
+        /// <summary>
+        /// Set the current state.
+        /// </summary>
+        /// <param name="state"></param>
         public void SetState(IState state)
         {
             if (state == _currentState)
@@ -41,6 +48,13 @@ namespace Furry
 
             _currentState.OnEnter();
         }
+
+        /// <summary>
+        /// Add a state transition.
+        /// </summary>
+        /// <param name="from"></param> Transition from this state.
+        /// <param name="to"></param> Transition to this state.
+        /// <param name="predicate"></param> Condition to transition.
         public void AddTransition(IState from, IState to, Func<bool> predicate)
         {
             if (_transitions.TryGetValue(from.GetType(), out var transitions) == false)
@@ -51,11 +65,21 @@ namespace Furry
 
             transitions.Add(new Transition(to, predicate));
         }
+
+        /// <summary>
+        /// Add a state that can be transitioned to from any other state.
+        /// </summary>
+        /// <param name="state"></param> The state
+        /// <param name="predicate"></param> Condition to transition.
         public void AddAnyTransition(IState state, Func<bool> predicate)
         {
             _anyTransitions.Add(new Transition(state, predicate));
         }
 
+
+        /// <summary>
+        /// A Transition state with a condition.
+        /// </summary>
         private class Transition
         {
             public Func<bool> Condition { get; }
@@ -68,6 +92,10 @@ namespace Furry
             }
         }
 
+        /// <summary>
+        /// Return the transition to another state if the conditions are met.
+        /// </summary>
+        /// <returns></returns>
         private Transition GetTransition()
         { 
             foreach (var transition in _anyTransitions)

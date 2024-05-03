@@ -1,0 +1,14 @@
+Instructions how to implement abilities
+===================================
+
+1. Add the "AbilityController" script to an object to give ist the ability to hold ability.
+2. Add whichever ability scriptable objects you want to the AbilityController for the object to have access to those abilities.
+
+Instructions to create a new ability
+====================================
+
+1. Create a new C# with the namespace "Furry"
+2. The script must inherit from the "Ability" class.
+3. Just inside of the namespace add "[CreateAssetMenu(fileName = "yourScriptName", menuName = "Furry/Abilities/yourScriptName")]".
+4. Create a new scriptable object of your new ability from the Abilities dropdown.
+5. Set the various serialized fields as desired.

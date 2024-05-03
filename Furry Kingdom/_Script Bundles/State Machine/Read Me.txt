@@ -1,0 +1,14 @@
+Instructions how to implement State Machine
+===========================================
+
+1. Add a refernce to the "StateMachine" on your script and create a new "StateMachine".
+2. Add references to the state you want to implement.
+3. Set the transition conditions and which states can transition to which.
+4. Set the initial state.
+
+
+Instructions how to create a new state
+======================================
+
+1. Create a script that inherits from IState.
+2. Create a constructor with the references that the state will need.

@@ -21,7 +21,7 @@ namespace Furry
                 return;
 
             var abilityTypes = Assembly.GetAssembly(typeof(Ability)).GetTypes().Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(Ability)));
-            
+
             _abilitiesByName = new Dictionary<string, Type>();
 
             foreach (var type in abilityTypes)
@@ -30,6 +30,11 @@ namespace Furry
             }
         }
 
+        /// <summary>
+        /// Creates and returns an instance of an ability.
+        /// </summary>
+        /// <param name="abilitytype"></param> The name of the ability to create.
+        /// <returns></returns>
         public static Ability GetAbility(string abilitytype)
         {
             InitializeFactory();
@@ -44,6 +49,10 @@ namespace Furry
             return null;
         }
 
+        /// <summary>
+        /// Returns a list of all of the ability names that are available.
+        /// </summary>
+        /// <returns></returns>
         public static List<string> GetAllDictNames()
         {
             var keyNames = new List<string>();

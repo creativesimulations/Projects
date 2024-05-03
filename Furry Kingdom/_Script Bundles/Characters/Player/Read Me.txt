@@ -1,0 +1,11 @@
+Instructions how to create a player
+======================================
+
+1. Attach a "Player" script to the player prefab.
+2. Attach a "MovementRigidBody" script to the player prefab.
+3. Attach a "PlayerInput" component to the player prefab.
+4. Attach an Animator component to the player prefab.
+5. Attach an "AnimatorState" script to the player prefab.
+6. Attach a "playerInputHandler" component to the player prefab.
+7. Attach a capsule trigger collider onto the head of the prefab to detect animals that are in range in order to attack them.
+8. Set the serialized fields on the various components as desired.

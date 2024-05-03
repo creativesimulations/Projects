@@ -12,11 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b8dcf133a2d1db4aa5804457a5baabc, type: 3}
   m_Name: Spider Stats
   m_EditorClassIdentifier: 
-  MaxHealth: 100
-  Strength: 5
-  Constitution: 3
-  Stamina: 5
-  Agility: 2
-  Speed: 1
-  RegenAmount: 1
-  RegenSpeed: 2.5
+  _strength: 2
+  _constitution: 2
+  _stamina: 3
+  _agility: 4
+  _speed: 4
+  _regenAmount: 1
+  _regenSpeed: 1

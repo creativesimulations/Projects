@@ -5,7 +5,6 @@ using UnityEngine.AI;
 
 public class CommandControlledBot : MonoBehaviour
 {
-
     private NavMeshAgent _agent;
     private Queue<Command> _commands = new Queue<Command>();
     private Command _currentCommand;
@@ -21,6 +20,9 @@ public class CommandControlledBot : MonoBehaviour
         ProcessCommands();
     }
 
+    /// <summary>
+    /// Processes the next command that is queued.
+    /// </summary>
     private void ProcessCommands()
     {
         if (_currentCommand != null && _currentCommand.IsFinished == false)
@@ -35,6 +37,9 @@ public class CommandControlledBot : MonoBehaviour
         _currentCommand.Execute();
     }
 
+    /// <summary>
+    /// Adds new command locations to move to when the mouse clicks on the navmesh.
+    /// </summary>
     private void ListenForCommands()
     {
         if (Input.GetMouseButtonDown(0))

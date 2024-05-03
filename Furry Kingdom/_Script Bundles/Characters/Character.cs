@@ -1,87 +1,205 @@
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Furry
 {
 
-    [RequireComponent(typeof(AbilityController))]
-    public abstract class Character : MonoBehaviour, IHaveStats, IUseAbilities, ICanRegen
+    public abstract class Character : MonoBehaviour, IUseAbilities, IHaveStats
     {
-        public int MaxHealth { get; set; }
+        [Header("Stats field.")]
+        [Tooltip("Stats scriptable object.")]
+        [SerializeField] protected StatsScriptable _stats;
+        [Tooltip("Ability controller which holds references to the abilites for the character.")]
+        protected AbilityController _abilityController;
+
         public int Strength { get; set; }
         public int Constitution { get; set; }
         public int Stamina { get; set; }
         public int Agility { get; set; }
-        public float Speed { get; set; }
-
-        public int CurrentHealth { get; set; }
+        public int Speed { get; set; }
         public int RegenAmount { get; set; }
         public float RegenSpeed { get; set; }
 
-        [SerializeField] protected HealthBar HealthBar;
-
-        [SerializeField] protected StatsScriptable _stats;
-
-        protected AbilityController _abilityController;
-
         protected virtual void Awake()
         {
-            HealthBar = GetComponentInChildren<HealthBar>();
-            _abilityController = GetComponent<AbilityController>();
             Init();
         }
 
         public virtual void Init()
         {
-            MaxHealth = _stats.MaxHealth;
-            Strength = _stats.Strength;
-            Constitution = _stats.Constitution;
-            Stamina = _stats.Stamina;
-            Agility = _stats.Agility;
-            Speed = _stats.Speed;
-            CurrentHealth = MaxHealth;
-            RegenAmount = _stats.RegenAmount;
-            RegenSpeed = _stats.RegenSpeed;
+            InitializeAbilityController();
+            InitializeStatsFields();
         }
 
-        public virtual float ModifySpeed(float newSpeed)
+        /// <summary>
+        /// Set the stats as the stats scriptable object serialized fields.
+        /// </summary>
+        public void InitializeStatsFields()
         {
-            return Speed = newSpeed;
+            Strength = _stats._strength;
+            Constitution = _stats._constitution;
+            Stamina = _stats._stamina;
+            Agility = _stats._agility;
+            Speed = _stats._speed;
+            RegenAmount = _stats._regenAmount;
+            RegenSpeed = _stats._regenSpeed;
         }
 
-        public virtual int ModifyMaxHealth(int amount)
-        {
-            return MaxHealth += amount;
-        }
-
-        public virtual void ModifyCurrentHealth(int amount)
-        {
-            CurrentHealth += amount;
-            HealthBar.UpdateHealthBar(CurrentHealth, MaxHealth);
-        }
-
-        public virtual float ModifyRegenAmount(float amount)
+        /// <summary>
+        /// Increase the strength stat by a specirfic amount.
+        /// </summary>
+        /// <param name="modifyAmount"></param> Amount to increase by.
+        public void IncreaseStrength(int modifyAmount)
         {
             throw new System.NotImplementedException();
         }
 
-
-        public void Use(string ability)
+        /// <summary>
+        /// Increase the constitution stat by a specific amount.
+        /// </summary>
+        /// <param name="modifyAmount"></param> Amount to increase by.
+        public void IncreaseConstitution(int modifyAmount)
         {
             throw new System.NotImplementedException();
         }
 
+        /// <summary>
+        /// Increase the stamina stat by a specific amount.
+        /// </summary>
+        /// <param name="modifyAmount"></param> Amount to increase by.
+        public void IncreaseStamina(int modifyAmount)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /// <summary>
+        /// Increase the agility stat by a specific amount.
+        /// </summary>
+        /// <param name="modifyAmount"></param> Amount to increase by.
+        public void IncreaseAgility(int modifyAmount)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /// <summary>
+        /// Increase the speed stat by a specific amount.
+        /// </summary>
+        /// <param name="modifyAmount"></param> Amount to increase by.
+        public void IncreaseSpeed(int modifyAmount)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /// <summary>
+        /// Increase the regeneration stat by a specific amount.
+        /// </summary>
+        /// <param name="modifyAmount"></param> Amount to increase by.
+        public void IncreaseRegenAmount(int modifyAmount)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /// <summary>
+        /// Increase the regeneration speed stat by a specific amount.
+        /// </summary>
+        /// <param name="modifyAmount"></param> Amount to increase by.
+        public void IncreaseRegenSpeed(float modifyAmount)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /// <summary>
+        /// Decrease the regeneration speed stat by a specific amount.
+        /// </summary>
+        /// <param name="modifyAmount"></param> Amount to decrease by.
+        public void DecreaseStrength(int modifyAmount)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /// <summary>
+        /// Decrease the consitution stat by a specific amount.
+        /// </summary>
+        /// <param name="modifyAmount"></param> Amount to decrease by.
+        public void DecreaseConstitution(int modifyAmount)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /// <summary>
+        /// Decrease the stamina stat by a specific amount.
+        /// </summary>
+        /// <param name="modifyAmount"></param> Amount to decrease by.
+        public void DecreaseStamina(int modifyAmount)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /// <summary>
+        /// Decrease the agility stat by a specific amount.
+        /// </summary>
+        /// <param name="modifyAmount"></param> Amount to decrease by.
+        public void DecreaseAgility(int modifyAmount)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /// <summary>
+        /// Decrease the speed stat by a specific amount.
+        /// </summary>
+        /// <param name="modifyAmount"></param> Amount to decrease by.
+        public void DecreaseSpeed(int modifyAmount)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /// <summary>
+        /// Decrease the regeneration stat by a specific amount.
+        /// </summary>
+        /// <param name="modifyAmount"></param> Amount to decrease by.
+        public void DecreaseRegenAmount(int modifyAmount)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /// <summary>
+        /// Decrease the regeneration speed stat by a specific amount.
+        /// </summary>
+        /// <param name="modifyAmount"></param> Amount to decrease by.
+        public void DecreaseRegenSpeed(float modifyAmount)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /// <summary>
+        /// Get current ability name.
+        /// </summary>
+        /// <returns></returns>
         public string GetAbilityName()
         {
-            throw new System.NotImplementedException();
+            return _abilityController.GetAbilityName();
         }
 
-        public void CheckImmunity(string ability)
+        /// <summary>
+        /// Returns whether the character is immune to the ability.
+        /// </summary>
+        /// <param name="ability"></param> Ability name to check.
+        /// <returns></returns>
+        public bool CheckImmunity(string ability)
         {
-            if (_abilityController.ImmuneToAbilitiesDictionary.ContainsKey(ability))
-            {
-                // run another method to activate ability.
-            }
+            return _abilityController.CheckImmunity(ability);
+        }
+
+        /// <summary>
+        /// Sets the ability controller on the gameobject so that it can be referenced.
+        /// </summary>
+        public void InitializeAbilityController()
+        {
+            _abilityController = GetComponent<AbilityController>();
+        }
+
+        public void Use()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

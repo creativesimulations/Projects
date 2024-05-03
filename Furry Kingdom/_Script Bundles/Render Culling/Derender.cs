@@ -1,35 +1,26 @@
-using Furry;
-using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Threading.Tasks;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Furry
 {
-
-
     public class Derender : MonoBehaviour
     {
         [SerializeField] private Vector3 _derenderInsideCubeSize;
-        private List<GameObject> _terrainTiles;
 
         private void Start()
         {
-            ProceduralLevelGenerator.OnTilesSet += Init;
+            ProceduralLevelGenerator.OnTilesSet += DerenderTiles;
         }
-        private void Init(List<GameObject> terrainTiles)
+
+        /// <summary>
+        /// Turns off the renderer components on all objects in the list.
+        /// </summary>
+        /// <param name="terrainTiles"></param> List of objects to derender.
+        private void DerenderTiles(List<GameObject> terrainTiles)
         {
-            _terrainTiles = terrainTiles;
-            DeactivateTiles();
-        }
-        private void DeactivateTiles()
-        {
-            for (int t = 0; t < _terrainTiles.Count; t++)
+            for (int t = 0; t < terrainTiles.Count; t++)
             {
-                RendererToggle rT = _terrainTiles[t].GetComponentInChildren<RendererToggle>();
+                RendererToggle rT = terrainTiles[t].GetComponentInChildren<RendererToggle>();
                 if (rT != null)
                 {
                     rT.DeActivateRenderers();

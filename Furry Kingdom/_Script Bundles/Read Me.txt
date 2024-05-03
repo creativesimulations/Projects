@@ -1,0 +1,8 @@
+This is a fairly new project that I began at my sons request.
+We wanted to play a fun game together, but haven't been able to find a fun quality game that we can play together locally with friends.
+So I began coding this small local multiplayer game.
+It it loosely based on the old game Q-Bert.
+Each player has a baby dragon that tries to control the most tiles be changing the tile flags to your color.
+You need to defeat animals to get their abilities and get stronger.
+To win, you need to collect the most tiles, find the King of the Hill tile and stay on it until the timer runs out!
+I've added ReadMe files to each of the folders explaining how to use the various scripts.

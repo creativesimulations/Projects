@@ -1,6 +1,3 @@
-using Furry;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
@@ -8,10 +5,10 @@ public class CameraFollow : MonoBehaviour
     [Header("Follow parameters")]
     [Tooltip("Object To Follow")]
     [SerializeField] Transform _objectToFollow;
-    [SerializeField, Range(.01f, 1f), Tooltip("Follow speed")]
-    private float _smoothSpeed;
-    [SerializeField, Tooltip("Follow speed")]
-    private Vector3 _offset;
+    [Tooltip("Follow speed")]
+    [SerializeField, Range(.01f, 1f)] private float _smoothSpeed;
+    [Tooltip("Offset angle")]
+    [SerializeField] private Vector3 _offset;
 
     private Vector3 _velocity = Vector3.zero;
 
@@ -19,6 +16,10 @@ public class CameraFollow : MonoBehaviour
     {
         Follow();
     }
+
+    /// <summary>
+    /// Set new transform position according to target position.
+    /// </summary>
     private void Follow()
     {
         Vector3 desiredPosition = _objectToFollow.position + _offset;

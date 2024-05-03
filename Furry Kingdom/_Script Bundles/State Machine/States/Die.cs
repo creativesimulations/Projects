@@ -1,13 +1,9 @@
-using System;
-using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.UIElements;
 
 namespace Furry
 {
 
-public class Die : IState
+    public class Die : IState
     {
         private Animator _animator;
         public Die(Animator animator)

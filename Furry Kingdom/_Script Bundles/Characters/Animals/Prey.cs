@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using System;
 using UnityEngine;
-using UnityEngine.AI;
 
 namespace Furry
 {
@@ -16,17 +13,19 @@ namespace Furry
         {
             base.Awake();
             _playerDetector = GetComponentInChildren<PlayerDetector>();
-            _playerDetector.SetTriggerRaidus(_runRange);
             _animator = GetComponent<Animator>();
 
+            // Create the state machine.
             _stateMachine = new StateMachine();
 
+            // Available states.
             var idle = new Idle(_animator, _maxIdleTime);
             var walk = new Walk(_navMeshMovement, _animator, _walkRadius);
-            var flee = new Flee(_navMeshMovement, _animator, _runParticleSystem, _playerDetector, this, _runRange);
-            var coolDown = new CoolDown(_animator, _playerDetector, _coolDownTime);
-            var die = new Die( _animator);
+            var flee = new Flee(_navMeshMovement, _animator, _runParticleSystem, _playerDetector, Speed, _runRange);
+            var coolDown = new CoolDown(_animator, _coolDownTime);
+            var die = new Die(_animator);
 
+            // States added.
             At(idle, walk, Bored());
             At(walk, idle, Tired());
             At(flee, idle, Calm());
@@ -34,20 +33,26 @@ namespace Furry
             At(flee, coolDown, Resting());
 
             _stateMachine.AddAnyTransition(flee, Scared());
-            _stateMachine.AddAnyTransition(die, Killed());
+            //  _stateMachine.AddAnyTransition(die, Killed());
 
-            _stateMachine.SetState(idle); // initial state
+            // The initial state.
+            _stateMachine.SetState(idle);
 
+            // Add transitions to the state machine.
             void At(IState to, IState from, Func<bool> condition) => _stateMachine.AddTransition(to, from, condition);
 
+            // Conditionas that are used to change the states.
             Func<bool> Tired() => () => _navMeshMovement.Arrived == true && _playerDetector.PlayerDetected == false;
             Func<bool> Calm() => () => _playerDetector.PlayerDetected == null;
             Func<bool> Scared() => () => _playerDetector.PlayerDetected == true && _playerDetector.IsPlayerLeaving == false;
             Func<bool> Resting() => () => _playerDetector.PlayerDetected == true && _playerDetector.IsPlayerLeaving == true;
             Func<bool> Bored() => () => idle.Restless == true && _playerDetector.PlayerDetected == false;
-            Func<bool> Killed() => () => CurrentHealth <= 0;
+            //    Func<bool> Killed() => () => CurrentHealth <= 0;   *** NEED TO IMPLEMENT HEALTH SYSTEM ***
         }
 
+        /// <summary>
+        /// Run the Tick method on the state machine every update.
+        /// </summary>
         private void Update() => _stateMachine.Tick();
 
         private void OnDrawGizmos()
